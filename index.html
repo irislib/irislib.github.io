@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Identifi : Distributed Identity and Reputation Database" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Identifi</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/identifi">View on GitHub</a>
+
+          <h1 id="project_title">Identifi</h1>
+          <h2 id="project_tagline">Distributed Identity and Reputation Database</h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="what" class="anchor" href="#what"><span class="octicon octicon-link"></span></a>What</h3>
+
+<ul>
+<li>Distributed identity and reputation database</li>
+<li>Web of trust</li>
+<li>API for integration with various trust or identity dependent applications</li>
+<li>Anyone can add identifiers and make statements about their relations to others</li>
+</ul><blockquote>
+<p><a href="mailto:user@example.com">user@example.com</a> and <a href="http://facebook.com/user">http://facebook.com/user</a> belong to the same owner
+<a href="mailto:alice@example.com">alice@example.com</a> and <a href="mailto:bob@example.com">bob@example.com</a> are friends</p>
+</blockquote>
+
+<ul>
+<li>Anyone can add reviews with their identity</li>
+</ul><blockquote>
+<p><a href="mailto:alice@example.com">alice@example.com</a> says: I successfully traded with <a href="mailto:bob@example.com">bob@example.com</a></p>
+</blockquote>
+
+<ul>
+<li>Credibility of statements can be evaluated by their author's reputation (history, social connections, identity verifications, reviews etc.)</li>
+</ul><h3>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why</h3>
+
+<ul>
+<li>Prevent spam (by accepting messages only from trusted / socially connected senders)</li>
+<li>Prevent astroturfing / sockpuppeting</li>
+<li>Makes it possible to trust people you have never met
+
+<ul>
+<li>Utilize your good reputation in various services and situations</li>
+<li>Reduces risk of trade or loan, thus reducing price</li>
+</ul>
+</li>
+<li>Ubiquitous reputation as non-violent, cost-effective and decentralized justice
+
+<ul>
+<li>Everyone can choose whose judgement or review to trust</li>
+<li>Incentive against antisocial behavior</li>
+<li>Incentive to restore trust by compensation and apology for misdeeds</li>
+</ul>
+</li>
+<li>Facilitate gift economy / time banking</li>
+<li>Distributed public messaging, with trust lists instead of centralized moderator power</li>
+<li>Censorship-resistance</li>
+<li>Open database, vs. proprietary information silos of reputation and online identity</li>
+</ul><h3>
+<a name="how" class="anchor" href="#how"><span class="octicon octicon-link"></span></a>How</h3>
+
+<ul>
+<li>Prototype built on Bitcoin code to utilize existing crypto, network, CLI, etc. functions</li>
+<li>Data package: [subject identifiers, object identifiers, message][signatures]
+
+<ul>
+<li>Identified by content hash</li>
+</ul>
+</li>
+<li>Flood packages throughout the network
+
+<ul>
+<li>Nodes can choose to accept only packages with 1) a trusted signature, 2) trusted subject</li>
+</ul>
+</li>
+<li>Crawl initial data from existing social networks and review systems</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-44692596-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
