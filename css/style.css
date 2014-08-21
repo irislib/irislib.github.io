@@ -735,9 +735,11 @@ nav#filter a {
 .testimonial span.author {
 	color: #fff;
 	font-weight: 700;
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .testimonial h5 {
+	background-color: rgba(0, 0, 0, 0.2);
 	color: #fff;
 	font-size: 18px;
 	font-family: Georgia, sans-serif;
