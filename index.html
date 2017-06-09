@@ -1,282 +1,109 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-		<!-- BASICS -->
-        <meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Identifi - Address book with ratings</title>
-        <meta name="description" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" type="text/css" href="css/isotope.css" media="screen" />	
-		<link rel="stylesheet" href="js/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="css/bootstrap.css">
-		<link rel="stylesheet" href="css/bootstrap-theme.css">
-        <link rel="stylesheet" href="css/style.css">
-		<!-- skin -->
-		<link rel="stylesheet" href="skin/default.css">
-    </head>
-	 
-    <body>
-		<section id="header" class="appear"></section>
-		<div class="navbar navbar-fixed-top" role="navigation" data-0="line-height:100px; height:100px; background-color:rgba(0,0,0,0.3);" data-300="line-height:60px; height:60px; background-color:rgba(0,0,0,1);">
-			 <div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-						<span class="fa fa-bars color-white"></span>
-					</button>
-					<h1><a class="navbar-brand" href="#" data-0="line-height:90px;" data-300="line-height:50px;">			Identifi
-					</a></h1>
-				</div>
-				<div class="navbar-collapse collapse">
-					<ul class="nav navbar-nav" data-0="margin-top:20px;" data-300="margin-top:5px;">
-						<li class="active"><a href="#header">Home</a></li>
-						<li><a href="#section-services">About</a></li>
-						<li><a href="#section-develop">Develop</a></li>
-					</ul>
-				</div><!--/.navbar-collapse -->
-			</div>
-		</div>
+<!doctype html>
+<html ng-app="identifiAngular">
+  <head>
+    <meta charset="utf-8">
+    <title ng-bind="pageTitle || 'Identifi'">Identifi</title>
+    <meta name="description" content="Global Address Book">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="Identifi" />
+    <meta property="og:description" content="Global Address Book" />
+    <meta property="og:url" content="https://identi.fi" />
+    <meta property="og:image" content="https://identi.fi/assets/images/cover.jpg" />
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link href="favicon.ico" rel="icon" type="image/x-icon">
 
-		<section class="featured">
-			<div class="container"> 
-				<div class="row mar-bot40">
-					<div class="col-md-6 col-md-offset-3">
-						
-						<div class="align-center">
-							<i class="fa fa-book fa-5x mar-bot20"></i>
-							<h2 class="slogan">Address book with ratings</h2>
-							<p>It's open source and P2P. Check it out on <br/>
-							<a href="https://github.com/identifi/identifi"><img src="img/GitHub_Logo.png" alt="" /></a>
-							</p>	
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		<!-- services -->
-		<section id="section-services" class="section pad-bot30 bg-white">
-		<div class="container"> 
-		
-			<div class="row mar-bot40">
-				<div class="col-lg-6" >
-					<div class="align-center">
-						<i class="fa fa-link fa-5x mar-bot20"></i>
-						<h4 class="text-bold">Use the same identity anywhere</h4>
-						<p>Link all your profiles and identifiers to form a trusted identity. Get verified by your social network or trusted parties.
-						</p>
-					</div>
-				</div>
-					
-				<div class="col-lg-6" >
-					<div class="align-center">
-						<i class="fa fa-check fa-5x mar-bot20"></i>
-						<h4 class="text-bold">Keep your identity up-to-date</h4>
-						<p>Email address expired? Twitter account got hacked? Notify your network about changes in contact details.
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="row mar-bot40">
-				<div class="col-lg-6" >
-					<div class="align-center">
-						<i class="fa fa-book fa-5x mar-bot20"></i>
-						<h4 class="text-bold">Decentralized address book</h4>
-						<p>Never worry about losing your friends' phone numbers again. Or server IPs or bitcoin addresses for that matter - Identifi supports all kinds of identifiers.
-						</p>
-					</div>
-				</div>
-				<div class="col-lg-6" >
-					<div class="align-center">
-						<i class="fa fa-thumbs-up fa-5x mar-bot20"></i>
-						<h4 class="text-bold">Helping people trust strangers</h4>
-						<p>Feedback systems on eBay, Airbnb and Uber work wonders.​ Let's make the power of good reputation portable to all sites and situations.
-						</p>
-					</div>
-				</div>
-			</div>	
+    <link rel="stylesheet" href="styles/vendor.css">
 
-		</div>
-		</section>
-			
-		<!-- spacer section:testimonial -->
-		<section id="testimonials" class="section" data-stellar-background-ratio="0.5">
-		<div class="container">
-			<div class="row">				
-					<div class="col-lg-12">
-							<div class="align-center">
-										<div class="testimonial pad-top40 pad-bot40 clearfix">
-											<h5>
-												"The world is still in need of a standard solution that transparently showcases the trustworthiness of individuals offering goods and services on the Internet."
-											</h5>
-											<br/>
-											<span class="author">&mdash; Erica Swallow, <a href="http://www.forbes.com/sites/ericaswallow/2013/10/09/reputation-economy/">Forbes</a></span>
-										</div>
+    <link rel="stylesheet" href="styles/app.css">
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
 
-								</div>
-							</div>
-					</div>
-				
-			</div>	
-		</div>	
-		</section>
-			
-		<!-- about -->
-		<section id="section-develop" class="section appear clearfix">
-		<div class="container">
+    <div ng-controller="MainController">
+      <nav class="navbar navbar-default navbar-fixed-top"> <!-- ng-controller="HeaderController"-->
+      	<div class="container" role="navigation">
+          <div class="navbar-header">
+            <h1><a href="#" class="navbar-brand" ng-click="logoClicked();removeFocus($event)">
+            identifi</a></h1>
+          </div>
 
-				<div class="row mar-bot40">
-					<div class="col-md-offset-3 col-md-6">
-						<div class="section-header">
-							<h2 class="section-heading animated" data-animation="bounceInUp">Join the development</h2>
-							<p>Familiar with Node.js or P2P networking? HTML5? Mobile apps or UX design? Other skills you believe the project could use?</p>
-							<p>We provide an opportunity to work in a creative team with something that has the potential to change the world.</p>
-							<p><strong>IRC:</strong> <a href="https://webchat.freenode.net/?channels=identifi&uio=d4">#identifi @ Freenode</a><br/>
-							<strong>email:</strong> <a href="mailto:sirius@iki.fi">sirius@iki.fi</a><br/>
-							<strong>GitHub:</strong> <a href="https://github.com/identifi/identifi">https://github.com/identifi/identifi</a></p>
-						</div>
-					</div>
-				</div>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="" ui-sref-active="active"><a ui-sref="messages.list"><span class="glyphicon glyphicon-globe"></span></a></li>
+            <li class="" ui-sref-active="active"><a ui-sref="about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
+      			<li ng-cloak ng-show="authentication.user" ui-sref-active="active">
+      				<a ui-sref="identities.show({ type: authentication.user.idType, value: authentication.user.idValue })">
+      					<span class="glyphicon glyphicon-user"></span> <span class="hidden-xs" ng-bind="authentication.user.displayName"></span>
+      				</a>
+      			</li>
+            <li ng-cloak ng-show="authentication.user"><a href="" ng-click="logout()" class="glyphicon glyphicon-log-out"></span></a></li>
+            <li uib-dropdown class="dropdown" ng-hide="authentication.user || !nodeInfo.loginOptions.length">
+              <a href="#" class="dropdown-toggle login-button" uib-dropdown-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Log in <b class="caret"></b></a>
+              <ul uib-dropdown-menu class="dropdown-menu login-menu">
+                <li>
+                  <button data-ng-click="openLoginModal()" id="email-login" class="btn btn-block btn-social btn-success">
+                    <i class="fa fa-key"></i> Private key
+                  </button>
+                </li>
+                <li ng-if="nodeInfo.loginOptions.indexOf('persona') > -1">
+                  <button data-ng-click="login()" id="email-login" class="btn btn-block btn-social btn-success">
+                    <i class="fa fa-envelope"></i> Email
+                  </button>
+                </li>
+                <li ng-if="nodeInfo.loginOptions.indexOf('facebook') > -1">
+                  <button onclick="window.location='/api/auth/facebook';" class="btn btn-block btn-social btn-facebook">
+                    <i class="fa fa-facebook"></i> Facebook
+                  </button>
+                </li>
+                <li ng-if="nodeInfo.loginOptions.indexOf('twitter') > -1">
+                  <button onclick="window.location='/api/auth/twitter';" class="btn btn-block btn-social btn-twitter">
+                    <i class="fa fa-twitter"></i> Twitter
+                  </button>
+                </li>
+                <li ng-if="nodeInfo.loginOptions.indexOf('google') > -1">
+                  <button onclick="window.location='/api/auth/google';" class="btn btn-block btn-social btn-google">
+                    <i class="fa fa-google-plus"></i> Google
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
 
-					<!-- <div class="row align-center mar-bot40">
-						<div class="col-md-3">
-							<div class="team-member">
-								<figure class="member-photo"><img src="img/team/member1.jpg" alt="" /></figure>
-								<div class="team-detail">
-									<h4>Jason Doe</h4>
-									<span>User experiences</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="team-member">
-								<figure class="member-photo"><img src="img/team/member2.jpg" alt="" /></figure>
-								<div class="team-detail">
-									<h4>Timothy Clark</h4>
-									<span>Web developer</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="team-member">
-								<figure class="member-photo"><img src="img/team/member3.jpg" alt="" /></figure>
-								<div class="team-detail">
-								<h4>Vicky Tan</h4>
-									<span>Web designer</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="team-member">
-								<figure class="member-photo"><img src="img/team/member4.jpg" alt="" /></figure>
-								<div class="team-detail">
-								<h4>Kevin Peterson</h4>
-									<span>UI designer</span>
-								</div>
-							</div>
-						</div>
-					</div> -->
-						
-		</div>
-		</section>
-		<!-- /about -->
-		
-		<!-- spacer section:stats -->
-		<!--<section id="parallax1" class="section pad-top40 pad-bot40" data-stellar-background-ratio="0.5">
-			<div class="container">
-            <div class="align-center pad-top40 pad-bot40">
-                <blockquote class="bigquote color-white">Indoctum accusamus comprehensam</blockquote>
-				<p class="color-white">Bootstraptaste</p>
+          <form class="navbar-form navbar-left nav-search" ng-submit="addAttribute()" role="search" ng-cloak ng-if="'identities.list' | isState">
+            <div class="inner-addon right-addon">
+              <i class="fa fa-search"></i>
+              <input type="text" ng-keydown="searchKeydown($event)" ng-model="query.term" autocomplete="off" autofocus value="" class="nav-search-field search-search form-control" placeholder="Search">
             </div>
-			</div>	
-		</section>
-		
-		
-		<section id="parallax2" class="section parallax" data-stellar-background-ratio="0.5">	
-            <div class="align-center pad-top40 pad-bot40">
-                <blockquote class="bigquote color-white">Indoctum accusamus comprehensam</blockquote>
-				<p class="color-white">Bootstraptaste</p>
+          </form>
+
+          <div ng-cloak ng-if="!('identities.list' | isState)" class="navbar-form navbar-left nav-search hidden-xs">
+            <div class="inner-addon right-addon">
+              <i class="fa fa-search"></i>
+              <input type="text" ng-model="query.term"
+              placeholder="Search"
+              uib-typeahead="identity for identity in search($viewValue, 5)"
+              typeahead-no-results="noResults" class="form-control nav-search-field"
+              typeahead-on-select="dropdownSearchSelect($item);query.term=''"
+              typeahead-focus-on-select="false"
+              typeahead-template-url="app/main/custom-search-row.html">
             </div>
-		</section> -->
+            <span ng-if="noResults" auto-close="disabled" is-open="true" uib-dropdown uib-dropdown-toggle>
+              <ul class="dropdown-menu" >
+                <li><a href>No results</a></li>
+              </ul>
+            </span>
+          </div>
 
- 		<!-- contact -->
-<!--
-		<section id="section-contact" class="section appear clearfix">
-			<div class="container">
-				
-				<div class="row mar-bot40">
-					<div class="col-md-offset-3 col-md-6">
-						<div class="section-header">
-							<h2 class="section-heading animated" data-animation="bounceInUp">Contact us</h2>
-							<p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet consectetur, adipisci velit, sed quia non numquam.</p>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2">
-						<div class="cform" id="contact-form">
-							<div id="sendmessage">
-								 Your message has been sent. Thank you!
-							</div>
-							<form action="contact/contact.php" method="post" role="form" class="contactForm">
-							  <div class="form-group">
-								<label for="name">Your Name</label>
-								<input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="maxlen:4" data-msg="Please enter at least 4 chars" />
-								<div class="validation"></div>
-							  </div>
-							  <div class="form-group">
-								<label for="email">Your Email</label>
-								<input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
-								<div class="validation"></div>
-							  </div>
-							  <div class="form-group">
-								<label for="subject">Subject</label>
-								<input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="maxlen:4" data-msg="Please enter at least 8 chars of subject" />
-								<div class="validation"></div>
-							  </div>
-							  <div class="form-group">
-								<label for="message">Message</label>
-								<textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us"></textarea>
-								<div class="validation"></div>
-							  </div>
-							  
-							  <button type="submit" class="btn btn-theme pull-left">SEND MESSAGE</button>
-							</form>
+      	</div>
+      </nav>
 
-						</div>
-					</div> -->
-					<!-- ./span12 --> <!--
-				</div>
-				
-			</div>
-		</section> -->
-		
-	<section id="footer" class="section footer">
-		<div class="container">
-			<div class="row align-center copyright">
-					<div class="col-sm-12"><p>Copyright &copy; 2014 Amoeba - by <a href="http://bootstraptaste.com">Bootstraptaste</a></p></div>
-			</div>
-		</div>
+      <div ui-view></div>
+    </div>
 
-	</section>
-	<a href="#header" class="scrollup"><i class="fa fa-chevron-up"></i></a>	
+    <script src="scripts/vendor.js"></script>
 
-	<script src="js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-	<script src="js/jquery.js"></script>
-	<script src="js/jquery.easing.1.3.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-	<script src="js/jquery.isotope.min.js"></script>
-	<script src="js/jquery.nicescroll.min.js"></script>
-	<script src="js/fancybox/jquery.fancybox.pack.js"></script>
-	<script src="js/skrollr.min.js"></script>		
-	<script src="js/jquery.scrollTo-1.4.3.1-min.js"></script>
-	<script src="js/jquery.localscroll-1.2.7-min.js"></script>
-	<script src="js/stellar.js"></script>
-	<script src="js/jquery.appear.js"></script>
-	<script src="js/validate.js"></script>
-    <script src="js/main.js"></script>
-	</body>
+    <script src="scripts/app.js"></script>
+
+  </body>
 </html>
