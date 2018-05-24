@@ -70602,18 +70602,18 @@ var util = {
     return key.prvKeyObj;
   },
 
+  prvKeyToJwk: function prvKeyToJwk(key) {
+    return KEYUTIL_1.getJWKFromKey(key);
+  },
+
   getHash: function getHash(str) {
     var hex = new MessageDigest({ alg: 'sha256', prov: 'cryptojs' }).digestString(str);
     return new Buffer(hex, 'hex').toString('base64');
   },
 
   _generateAndSerializeKey: function _generateAndSerializeKey() {
-    var kp = this.generateKeyPair();
-    myKey = kp.prvKeyObj;
-    myKey.pubKeyASN1 = this.getPubKeyASN1(kp.pubKeyObj);
-    myKey.keyID = this.getHash(myKey.pubKeyASN1);
-    var k = KEYUTIL_1.getJWKFromKey(myKey);
-    return _JSON$stringify(k);
+    myKey = this.generateKey();
+    return _JSON$stringify(this.prvKeyToJwk(myKey));
   },
 
   getDefaultKey: function getDefaultKey() {
@@ -72339,25 +72339,29 @@ var Message = function () {
     return this;
   };
 
-  Message.create = function create(signedData) {
-    if (!signedData.author) {
-      signedData.author = [['keyID', util.getDefaultKey().keyID]];
+  Message.create = function create(signedData, signingKey) {
+    if (!signedData.author && signingKey) {
+      signedData.author = [['keyID', signingKey.keyID]];
     }
     signedData.timestamp = signedData.timestamp || new Date().toISOString();
     signedData.context = signedData.context || 'identifi';
-    return new Message(signedData);
+    var m = new Message(signedData);
+    if (signingKey) {
+      m.sign(signingKey);
+    }
+    return m;
   };
 
-  Message.createVerification = function createVerification(signedData) {
+  Message.createVerification = function createVerification(signedData, signingKey) {
     signedData.type = 'verification';
-    return Message.create(signedData);
+    return Message.create(signedData, signingKey);
   };
 
-  Message.createRating = function createRating(signedData) {
+  Message.createRating = function createRating(signedData, signingKey) {
     signedData.type = 'rating';
     signedData.maxRating = signedData.maxRating || 10;
     signedData.minRating = signedData.minRating || -10;
-    return Message.create(signedData);
+    return Message.create(signedData, signingKey);
   };
 
   Message.fromJws = function fromJws(jwsString) {
@@ -80773,7 +80777,7 @@ var Index = function () {
   return Index;
 }();
 
-var version$2 = "0.0.49";
+var version$2 = "0.0.51";
 
 /*eslint no-useless-escape: "off", camelcase: "off" */
 
