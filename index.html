@@ -38,42 +38,15 @@
       				</a>
       			</li>
             <li ng-cloak ng-show="authentication.user"><a href="" ng-click="logout()" class="glyphicon glyphicon-log-out"></span></a></li>
-            <li uib-dropdown class="dropdown" ng-hide="authentication.user || !nodeInfo.loginOptions.length">
-              <a href="#" class="dropdown-toggle login-button" uib-dropdown-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Log in <b class="caret"></b></a>
-              <ul uib-dropdown-menu class="dropdown-menu login-menu">
-                <li>
-                  <button data-ng-click="openLoginModal()" id="email-login" class="btn btn-block btn-social btn-success">
-                    <i class="fa fa-key"></i> Private key
-                  </button>
-                </li>
-                <li ng-if="nodeInfo.loginOptions.indexOf('persona') > -1">
-                  <button data-ng-click="login()" id="email-login" class="btn btn-block btn-social btn-success">
-                    <i class="fa fa-envelope"></i> Email
-                  </button>
-                </li>
-                <li ng-if="nodeInfo.loginOptions.indexOf('facebook') > -1">
-                  <button onclick="window.location='/api/auth/facebook';" class="btn btn-block btn-social btn-facebook">
-                    <i class="fa fa-facebook"></i> Facebook
-                  </button>
-                </li>
-                <li ng-if="nodeInfo.loginOptions.indexOf('twitter') > -1">
-                  <button onclick="window.location='/api/auth/twitter';" class="btn btn-block btn-social btn-twitter">
-                    <i class="fa fa-twitter"></i> Twitter
-                  </button>
-                </li>
-                <li ng-if="nodeInfo.loginOptions.indexOf('google') > -1">
-                  <button onclick="window.location='/api/auth/google';" class="btn btn-block btn-social btn-google">
-                    <i class="fa fa-google-plus"></i> Google
-                  </button>
-                </li>
-              </ul>
+            <li class="dropdown" ng-hide="authentication.user">
+              <a ng-click="openLoginModal()" href="" class="dropdown-toggle login-button" uib-dropdown-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
             </li>
           </ul>
 
           <form class="navbar-form navbar-left nav-search" ng-submit="addAttribute()" role="search" ng-cloak ng-if="'identities.list' | isState">
             <div class="inner-addon right-addon">
               <i class="fa fa-search"></i>
-              <input type="text" ng-keydown="searchKeydown($event)" ng-model="query.term" autocomplete="off" autofocus value="" class="nav-search-field search-search form-control" placeholder="Search">
+              <input type="text" focus-on="searchFocus" ng-keydown="searchKeydown($event)" ng-model="query.term" autocomplete="off" autofocus value="" class="nav-search-field search-search form-control" placeholder="Search">
             </div>
           </form>
 
