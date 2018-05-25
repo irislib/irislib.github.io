@@ -32,9 +32,9 @@
           <ul class="nav navbar-nav navbar-right">
             <li class="" ui-sref-active="active"><a ui-sref="messages.list"><span class="glyphicon glyphicon-globe"></span></a></li>
             <li class="" ui-sref-active="active"><a ui-sref="about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-      			<li ng-cloak ng-show="authentication.user" ui-sref-active="active">
-      				<a ui-sref="identities.show({ type: authentication.user.idType, value: authentication.user.idValue })">
-      					<span class="glyphicon glyphicon-user"></span> <span class="hidden-xs" ng-bind="authentication.user.displayName"></span>
+      			<li ng-cloak ng-show="authentication.identity" ui-sref-active="active">
+      				<a ui-sref="identities.show({ type: authentication.user.idType, value: authentication.user.idValue })" class="nav-identicon">
+      					<identicon width="26" identity="authentication.identity" show-distance="0">
       				</a>
       			</li>
             <li ng-cloak ng-show="authentication.user"><a href="" ng-click="logout()" class="glyphicon glyphicon-log-out"></span></a></li>
