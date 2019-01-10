@@ -31,13 +31,12 @@
 
           <ul class="nav navbar-nav navbar-right">
             <li class="" ui-sref-active="active"><a ui-sref="messages.list"><span class="glyphicon glyphicon-globe"></span></a></li>
-            <li class="" ui-sref-active="active"><a ui-sref="about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-      			<li ng-cloak ng-show="authentication.identity" ui-sref-active="active">
+            <li ng-cloak ng-show="authentication.user" ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a></li>
+            <li ng-cloak ng-show="authentication.identity" ui-sref-active="active">
       				<a ui-sref="identities.show({ type: authentication.user.idType, value: authentication.user.idValue })" class="nav-identicon">
-      					<identicon width="26" identity="authentication.identity" show-distance="0">
+      					<identicon width="26" identity="authentication.identity" show-distance="0" ipfs="ipfs">
       				</a>
       			</li>
-            <li ng-cloak ng-show="authentication.user"><a href="" ng-click="logout()" class="glyphicon glyphicon-log-out"></span></a></li>
             <li class="dropdown" ng-hide="authentication.user">
               <a ng-click="openLoginModal()" href="" class="dropdown-toggle login-button" uib-dropdown-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
             </li>
@@ -63,7 +62,12 @@
             </div>
             <span ng-if="noResults" auto-close="disabled" is-open="true" uib-dropdown uib-dropdown-toggle>
               <ul class="dropdown-menu" >
-                <li><a href>No results</a></li>
+                <li>
+                  <a class="search-result-row" ui-sref="identities.create">
+                    <span style="line-height:46px" class="glyphicon glyphicon-plus"></span>
+                    Add entry<span ng-if="query.term">: <span ng-bind="capitalizeWords(query.term)"></span></span>
+                  </a>
+                </li>
               </ul>
             </span>
           </div>
@@ -74,7 +78,7 @@
       <div ui-view></div>
     </div>
 
-    <script src="assets/js/ipfs.min.js"></script>
+    <script src="assets/js/ipfs.js"></script>
     <script src="scripts/vendor.js"></script>
 
     <script src="scripts/app.js"></script>
