@@ -78583,7 +78583,7 @@ angular
 	    var indexKeys = [];
 	    var d = await util$1.timeoutPromise(identity.get('trustDistance').then(), GUN_TIMEOUT);
 	    await identity.get('attrs').map().once(function (a) {
-	      if (!(a && a.val && a.name)) {
+	      if (!a) {
 	        // TODO: this sometimes returns undefined
 	        return;
 	      }
@@ -79106,7 +79106,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.64";
+	var version$1 = "0.0.63";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
