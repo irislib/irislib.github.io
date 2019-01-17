@@ -78521,7 +78521,8 @@ angular
 	    });
 	    setTimeout(function () {
 	      /* console.log(`r`, r);*/sortAndResolve();
-	    }, 100);
+	    }, 100); // This probably causes the problem of results not appearing on first try
+	    // search should probably return an object that changes when new results are added / found
 	  });
 	}
 
@@ -78583,7 +78584,7 @@ angular
 	    var indexKeys = [];
 	    var d = await util$1.timeoutPromise(identity.get('trustDistance').then(), GUN_TIMEOUT);
 	    await identity.get('attrs').map().once(function (a) {
-	      if (!a) {
+	      if (!(a && a.val && a.name)) {
 	        // TODO: this sometimes returns undefined
 	        return;
 	      }
@@ -78847,7 +78848,8 @@ angular
 	    var ids = _Object$values(_Object$assign({}, authorIdentities, recipientIdentities));
 	    for (var i = 0; i < ids.length; i++) {
 	      // add new identifiers to identity
-	      var relocated = this.gun.get('identities').set((await ids[i].gun.then())); // this may screw up real time updates? and create unnecessary `identities` entries
+	      var data = (await ids[i].gun.then()) || {};
+	      var relocated = this.gun.get('identities').set(data); // this may screw up real time updates? and create unnecessary `identities` entries
 	      if (recipientIdentities.hasOwnProperty(ids[i].gun['_'].link)) {
 	        await this._updateMsgRecipientIdentity(msg, msgIndexKey, ids[i].gun);
 	      }
@@ -79106,7 +79108,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.63";
+	var version$1 = "0.0.64";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
