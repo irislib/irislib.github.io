@@ -74768,7 +74768,8 @@ angular
 	  phone: /^\d{7,}$/,
 	  keyID: null,
 	  url: /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi,
-	  account: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+	  account: /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i,
+	  uuid: /[0-9a-f]{8}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{4}\-[0-9a-f]{12}/
 	};
 
 	/**
@@ -74804,6 +74805,13 @@ angular
 	      throw new Error("Invalid attribute data", data);
 	    }
 	  }
+
+	  Attribute.getUuid = function getUuid() {
+	    var b = function b(a) {
+	      return a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, b);
+	    };
+	    return new Attribute(["uuid", b()]);
+	  };
 
 	  /**
 	  * @returns {Object} an object with attribute types as keys and regex patterns as values
@@ -78848,7 +78856,7 @@ angular
 	    var ids = _Object$values(_Object$assign({}, authorIdentities, recipientIdentities));
 	    for (var i = 0; i < ids.length; i++) {
 	      // add new identifiers to identity
-	      var data = (await ids[i].gun.then()) || {};
+	      var data = (await ids[i].gun.then()) || {}; // TODO: data is sometimes undefined and new identity is not added!
 	      var relocated = this.gun.get('identities').set(data); // this may screw up real time updates? and create unnecessary `identities` entries
 	      if (recipientIdentities.hasOwnProperty(ids[i].gun['_'].link)) {
 	        await this._updateMsgRecipientIdentity(msg, msgIndexKey, ids[i].gun);
@@ -78935,7 +78943,7 @@ angular
 	      });
 	      var linkTo = Identity.getLinkTo(attrs);
 	      var random = Math.floor(Math.random() * _Number$MAX_SAFE_INTEGER); // TODO: bubblegum fix
-	      var _id2 = new Identity(this.gun.get('identities').get(random).put({}), { attrs: attrs, linkTo: linkTo, trustDistance: 99 }, true);
+	      var _id2 = new Identity(this.gun.get('identities').get(random).put({ attrs: attrs, linkTo: linkTo, trustDistance: 99 }), { attrs: attrs, linkTo: linkTo, trustDistance: 99 }, true);
 	      // {a:1} because inserting {} causes a "no signature on data" error from gun
 
 	      // TODO: take msg author trust into account
