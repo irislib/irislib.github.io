@@ -78530,13 +78530,15 @@ angular
 	// temp method for GUN search
 	async function searchText(node, callback, query, limit, cursor) {
 	  var results = 0;
+	  var seen = {};
 	  node.map(function (value, key) {
 	    if ((!cursor || key > cursor) && key.indexOf(query) === 0) {
-	      if (results >= limit) {
+	      if (results >= limit || seen.hasOwnProperty(key)) {
 	        // TODO: turn off .map cb
 	        return;
 	      }
 	      if (value) {
+	        seen[key] = true;
 	        results++;
 	        callback({ value: value, key: key });
 	      }
@@ -79157,7 +79159,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.71";
+	var version$1 = "0.0.72";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
