@@ -78529,17 +78529,18 @@ angular
 
 	// temp method for GUN search
 	async function searchText(node, callback, query, limit, cursor) {
-	  var results = 0;
 	  var seen = {};
-	  node.map(function (value, key) {
+	  node.map().on(function (value, key, msg, eve) {
 	    if ((!cursor || key > cursor) && key.indexOf(query) === 0) {
-	      if (results >= limit || seen.hasOwnProperty(key)) {
-	        // TODO: turn off .map cb
+	      if (_Object$keys(seen).length >= limit) {
+	        eve.off();
 	        return;
 	      }
-	      if (value) {
+	      if (seen.hasOwnProperty(key)) {
+	        return;
+	      }
+	      if (value && _Object$keys(value).length > 1) {
 	        seen[key] = true;
-	        results++;
 	        callback({ value: value, key: key });
 	      }
 	    }
@@ -78892,7 +78893,7 @@ angular
 	    var msgs = [];
 	    if (this.options.importFromTrustedIndexes) {
 	      await util$1.timeoutPromise(new _Promise(function (resolve) {
-	        _this.gun.user(gunUri).get('identifi').get('messagesByDistance').map(function (val, key) {
+	        _this.gun.user(gunUri).get('identifi').get('messagesByDistance').map().once(function (val, key) {
 	          var d = _Number$parseInt(key.split(':')[0]);
 	          if (!isNaN(d) && d <= maxCrawlDistance) {
 	            Message.fromSig(val).then(function (msg) {
@@ -79096,7 +79097,7 @@ angular
 	    // TODO: param 'exact', type param
 	    var seen = {};
 	    var results = 0;
-	    this.gun.get('identitiesByTrustDistance').map(function (id, key) {
+	    this.gun.get('identitiesByTrustDistance').map().once(function (id, key) {
 	      if (results >= limit) {
 	        // TODO: turn off .map cb
 	        return;
@@ -79112,9 +79113,9 @@ angular
 	      }
 	    });
 	    if (this.options.queryTrustedIndexes) {
-	      this.gun.get('trustedIndexes').map(function (val, key) {
+	      this.gun.get('trustedIndexes').map().once(function (val, key) {
 	        if (val) {
-	          _this3.gun.user(key).get('identifi').get('identitiesByTrustDistance').map(function (id, k) {
+	          _this3.gun.user(key).get('identifi').get('identitiesByTrustDistance').map().once(function (id, k) {
 	            if (results >= limit) {
 	              // TODO: turn off .map cb
 	              return;
@@ -79159,7 +79160,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.72";
+	var version$1 = "0.0.73";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
