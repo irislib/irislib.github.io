@@ -78770,12 +78770,12 @@ angular
 	  Index.prototype._updateMsgRecipientIdentity = async function _updateMsgRecipientIdentity(msg, msgIndexKey, recipient) {
 	    var hash = 'todo';
 	    var identityIndexKeysBefore = await this.getIdentityIndexKeys(recipient, hash.substr(0, 6));
-	    if (msg.signedData.type === 'verification') {
-	      var attrs = await new _Promise(function (resolve) {
-	        recipient.get('attrs').load(function (r) {
-	          return resolve(r);
-	        });
+	    var attrs = await new _Promise(function (resolve) {
+	      recipient.get('attrs').load(function (r) {
+	        return resolve(r);
 	      });
+	    });
+	    if (msg.signedData.type === 'verification') {
 	      msg.signedData.recipient.forEach(function (a1) {
 	        var hasAttr = false;
 	        _Object$keys(attrs).forEach(function (k) {
@@ -78829,7 +78829,6 @@ angular
 	    if (msg.ipfsUri) {
 	      obj.ipfsUri = msg.ipfsUri;
 	    }
-	    console.log('adding to', recipient['_'].link, msgIndexKey, obj);
 	    recipient.get('received').get(msgIndexKey).put(obj);
 	    var identityIndexKeysAfter = await this.getIdentityIndexKeys(recipient, hash.substr(0, 6));
 	    for (var j = 0; j < identityIndexKeysBefore.length; j++) {
@@ -78872,15 +78871,14 @@ angular
 	    for (var i = 0; i < ids.length; i++) {
 	      // add new identifiers to identity
 	      var data = await ids[i].gun.then(); // TODO: data is sometimes undefined and new identity is not added!
-	      console.log('data', data);
-	      console.log('recipientIdentities', recipientIdentities);
+	      var relocated = data ? this.gun.get('identities').set(data) : ids[i].gun; // this may screw up real time updates? and create unnecessary `identities` entries
 	      if (recipientIdentities.hasOwnProperty(ids[i].gun['_'].link)) {
 	        await this._updateMsgRecipientIdentity(msg, msgIndexKey, ids[i].gun);
 	      }
 	      if (authorIdentities.hasOwnProperty(ids[i].gun['_'].link)) {
 	        await this._updateMsgAuthorIdentity(msg, msgIndexKey, ids[i].gun);
 	      }
-	      await this._addIdentityToIndexes(ids[i].gun);
+	      await this._addIdentityToIndexes(relocated);
 	    }
 	  };
 
