@@ -75363,7 +75363,7 @@ angular
 	  *
 	  * If default key does not exist, it is generated.
 	  * @param {string} datadir directory to find key from. In browser, localStorage is used instead.
-	  * @returns {Object} Key object
+	  * @returns Promise{Object} keypair object
 	  */
 	  Key.getDefault = async function getDefault() {
 	    var datadir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.';
@@ -75402,6 +75402,7 @@ angular
 
 	  /**
 	  * Serialize key as JSON Web key
+	  * @param {Object} key key to serialize
 	  * @returns {String} JSON Web Key string
 	  */
 
@@ -75409,6 +75410,13 @@ angular
 	  Key.toJwk = function toJwk(key) {
 	    return _JSON$stringify(key);
 	  };
+
+	  /**
+	  * Get keyID
+	  * @param {Object} key key to get an id for. Currently just returns the public key string.
+	  * @returns {String} JSON Web Key string
+	  */
+
 
 	  Key.getId = function getId(key) {
 	    if (!(key && key.pub)) {
@@ -75419,7 +75427,7 @@ angular
 	  };
 
 	  /**
-	  * Get a Key from a JSON Web Key object.
+	  * Get a keypair from a JSON Web Key object.
 	  * @param {Object} jwk JSON Web Key
 	  * @returns {String}
 	  */
@@ -75430,8 +75438,8 @@ angular
 	  };
 
 	  /**
-	  * Generate a new key
-	  * @returns {Object} Gun.SEA private key object
+	  * Generate a new keypair
+	  * @returns Promise{Object} Gun.SEA private key object
 	  */
 
 
@@ -75439,10 +75447,26 @@ angular
 	    return (gun_min.SEA || window.Gun.SEA).pair();
 	  };
 
+	  /**
+	  * Sign a message
+	  * @param {String} msg message to sign
+	  * @param {Object} pair signing keypair
+	  * @returns Promise{String} signed message string
+	  */
+
+
 	  Key.sign = async function sign(msg, pair) {
 	    var sig = await (gun_min.SEA || window.Gun.SEA).sign(msg, pair);
 	    return 'a' + sig;
 	  };
+
+	  /**
+	  * Verify a signed message
+	  * @param {String} msg message to verify
+	  * @param {Object} pubKey public key of the signer
+	  * @returns Promise{String} signature string
+	  */
+
 
 	  Key.verify = function verify(msg, pubKey) {
 	    return (gun_min.SEA || window.Gun.SEA).verify(msg.slice(1), pubKey);
@@ -75642,7 +75666,7 @@ angular
 	  * Create an identifi message. Message timestamp and context (identifi) are automatically set. If signingKey is specified and author omitted, signingKey will be used as author.
 	  * @param {Object} signedData message data object including author, recipient and other possible attributes
 	  * @param {Object} signingKey optionally, you can set the key to sign the message with
-	  * @returns {Message} Identifi message
+	  * @returns Promise{Message} Identifi message
 	  */
 
 
@@ -75660,7 +75684,8 @@ angular
 	  };
 
 	  /**
-	  * Create an Identifi verification message. Message type, maxRating, minRating, timestamp and context (identifi) are automatically set. If signingKey is specified and author omitted, signingKey will be used as author.
+	  * Create an Identifi verification message. Message signedData's type, timestamp and context (identifi) are automatically set. Recipient must be set. If signingKey is specified and author omitted, signingKey will be used as author.
+	  * @returns Promise{Object} message object promise
 	  */
 
 
@@ -75670,7 +75695,8 @@ angular
 	  };
 
 	  /**
-	  * Create an Identifi rating message. Message type, maxRating, minRating, timestamp and context are set automatically. If signingKey is specified and author omitted, signingKey will be used as author.
+	  * Create an Identifi rating message. Message signedData's type, maxRating, minRating, timestamp and context are set automatically. Recipient and rating must be set. If signingKey is specified and author omitted, signingKey will be used as author.
+	  * @returns Promise{Object} message object promise
 	  */
 
 
@@ -78548,6 +78574,9 @@ angular
 	var Index = function () {
 	  /**
 	  * When you use someone else's index, initialise it with this constructor
+	  * @param {Object} gun gun node that contains an Identifi index (e.g. user.get('identifi'))
+	  * @param {Object} options {importFromTrustedIndexes: true, subscribeToTrustedIndexes: true, queryTrustedIndexes: true}
+	  * @returns {Index} Identifi index object
 	  */
 	  function Index(gun, options) {
 	    _classCallCheck(this, Index);
@@ -78562,17 +78591,21 @@ angular
 
 	  /**
 	  * Use this to load an index that you can write to
-	  * @returns {Index}
+	  * @param {Object} gun gun instance where the index is stored (e.g. new Gun())
+	  * @param {Object} keypair SEA keypair (can be generated with await identifiLib.Key.generate())
+	  * @returns Promise{Index}
 	  */
 
 
 	  Index.create = async function create(gun, keypair) {
+	    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
 	    if (!keypair) {
 	      keypair = await Key.getDefault();
 	    }
 	    var user = gun.user();
 	    user.auth(keypair);
-	    var i = new Index(user.get('identifi'));
+	    var i = new Index(user.get('identifi'), options);
 	    i.viewpoint = new Attribute({ name: 'keyID', val: Key.getId(keypair) });
 	    await i.gun.get('viewpoint').put(i.viewpoint);
 	    var uri = i.viewpoint.uri();
@@ -78706,7 +78739,9 @@ angular
 	  };
 
 	  /**
-	  * @returns {Array} list of messages sent by param identity
+	  * Get Messages sent by identity
+	  * @param {Identity} identity identity whose sent Messages to get
+	  * @param {Function} callback callback function that receives the Messages one by one
 	  */
 
 
@@ -78717,7 +78752,9 @@ angular
 	  };
 
 	  /**
-	  * @returns {Array} list of messages received by param identity
+	  * Get Messages received by identity
+	  * @param {Identity} identity identity whose received Messages to get
+	  * @param {Function} callback callback function that receives the Messages one by one
 	  */
 
 
@@ -78793,6 +78830,8 @@ angular
 	        }
 	      });
 	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs));
+	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs));
+	      recipient.get('attrs').put(attrs);
 	      recipient.get('attrs').put(attrs);
 	    }
 	    if (msg.signedData.type === 'rating') {
@@ -79168,7 +79207,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.74";
+	var version$1 = "0.0.75";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
