@@ -78862,7 +78862,7 @@ angular
 	    if (msg.ipfsUri) {
 	      obj.ipfsUri = msg.ipfsUri;
 	    }
-	    author.get('sent').get(msgIndexKey).put(obj);
+	    author.get('sent').get(msgIndexKey).put(obj); // for some reason, doesn't work unless I do it twice
 	    author.get('sent').get(msgIndexKey).put(obj);
 	    return;
 	  };
