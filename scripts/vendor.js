@@ -75363,7 +75363,7 @@ angular
 	  *
 	  * If default key does not exist, it is generated.
 	  * @param {string} datadir directory to find key from. In browser, localStorage is used instead.
-	  * @returns Promise{Object} keypair object
+	  * @returns {Promise(Object)} keypair object
 	  */
 	  Key.getDefault = async function getDefault() {
 	    var datadir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.';
@@ -75439,7 +75439,7 @@ angular
 
 	  /**
 	  * Generate a new keypair
-	  * @returns Promise{Object} Gun.SEA private key object
+	  * @returns {Promise(Object)} Gun.SEA keypair object
 	  */
 
 
@@ -75451,7 +75451,7 @@ angular
 	  * Sign a message
 	  * @param {String} msg message to sign
 	  * @param {Object} pair signing keypair
-	  * @returns Promise{String} signed message string
+	  * @returns {Promise(String)} signed message string
 	  */
 
 
@@ -75464,7 +75464,7 @@ angular
 	  * Verify a signed message
 	  * @param {String} msg message to verify
 	  * @param {Object} pubKey public key of the signer
-	  * @returns Promise{String} signature string
+	  * @returns {Promise(String)} signature string
 	  */
 
 
@@ -76139,57 +76139,6 @@ angular
 
 	var _Number$MAX_SAFE_INTEGER = unwrapExports(maxSafeInteger$1);
 
-	var _stringWs = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
-	  '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
-
-	var space = '[' + _stringWs + ']';
-	var non = '\u200b\u0085';
-	var ltrim = RegExp('^' + space + space + '*');
-	var rtrim = RegExp(space + space + '*$');
-
-	var exporter = function (KEY, exec, ALIAS) {
-	  var exp = {};
-	  var FORCE = _fails(function () {
-	    return !!_stringWs[KEY]() || non[KEY]() != non;
-	  });
-	  var fn = exp[KEY] = FORCE ? exec(trim) : _stringWs[KEY];
-	  if (ALIAS) exp[ALIAS] = fn;
-	  _export(_export.P + _export.F * FORCE, 'String', exp);
-	};
-
-	// 1 -> String#trimLeft
-	// 2 -> String#trimRight
-	// 3 -> String#trim
-	var trim = exporter.trim = function (string, TYPE) {
-	  string = String(_defined(string));
-	  if (TYPE & 1) string = string.replace(ltrim, '');
-	  if (TYPE & 2) string = string.replace(rtrim, '');
-	  return string;
-	};
-
-	var _stringTrim = exporter;
-
-	var $parseInt = _global.parseInt;
-	var $trim = _stringTrim.trim;
-
-	var hex = /^[-+]?0[xX]/;
-
-	var _parseInt = $parseInt(_stringWs + '08') !== 8 || $parseInt(_stringWs + '0x16') !== 22 ? function parseInt(str, radix) {
-	  var string = $trim(String(str), 3);
-	  return $parseInt(string, (radix >>> 0) || (hex.test(string) ? 16 : 10));
-	} : $parseInt;
-
-	// 20.1.2.13 Number.parseInt(string, radix)
-	_export(_export.S + _export.F * (Number.parseInt != _parseInt), 'Number', { parseInt: _parseInt });
-
-	var _parseInt$1 = _core.Number.parseInt;
-
-	var _parseInt$2 = createCommonjsModule(function (module) {
-	module.exports = { "default": _parseInt$1, __esModule: true };
-	});
-
-	var _Number$parseInt = unwrapExports(_parseInt$2);
-
 	var isEnum$1 = _objectPie.f;
 	var _objectToArray = function (isEntries) {
 	  return function (it) {
@@ -76240,6 +76189,57 @@ angular
 	});
 
 	var _Number$isNaN = unwrapExports(isNan$1);
+
+	var _stringWs = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
+	  '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
+
+	var space = '[' + _stringWs + ']';
+	var non = '\u200b\u0085';
+	var ltrim = RegExp('^' + space + space + '*');
+	var rtrim = RegExp(space + space + '*$');
+
+	var exporter = function (KEY, exec, ALIAS) {
+	  var exp = {};
+	  var FORCE = _fails(function () {
+	    return !!_stringWs[KEY]() || non[KEY]() != non;
+	  });
+	  var fn = exp[KEY] = FORCE ? exec(trim) : _stringWs[KEY];
+	  if (ALIAS) exp[ALIAS] = fn;
+	  _export(_export.P + _export.F * FORCE, 'String', exp);
+	};
+
+	// 1 -> String#trimLeft
+	// 2 -> String#trimRight
+	// 3 -> String#trim
+	var trim = exporter.trim = function (string, TYPE) {
+	  string = String(_defined(string));
+	  if (TYPE & 1) string = string.replace(ltrim, '');
+	  if (TYPE & 2) string = string.replace(rtrim, '');
+	  return string;
+	};
+
+	var _stringTrim = exporter;
+
+	var $parseInt = _global.parseInt;
+	var $trim = _stringTrim.trim;
+
+	var hex = /^[-+]?0[xX]/;
+
+	var _parseInt = $parseInt(_stringWs + '08') !== 8 || $parseInt(_stringWs + '0x16') !== 22 ? function parseInt(str, radix) {
+	  var string = $trim(String(str), 3);
+	  return $parseInt(string, (radix >>> 0) || (hex.test(string) ? 16 : 10));
+	} : $parseInt;
+
+	// 20.1.2.13 Number.parseInt(string, radix)
+	_export(_export.S + _export.F * (Number.parseInt != _parseInt), 'Number', { parseInt: _parseInt });
+
+	var _parseInt$1 = _core.Number.parseInt;
+
+	var _parseInt$2 = createCommonjsModule(function (module) {
+	module.exports = { "default": _parseInt$1, __esModule: true };
+	});
+
+	var _Number$parseInt = unwrapExports(_parseInt$2);
 
 	// 19.1.2.1 Object.assign(target, source, ...)
 
@@ -78575,25 +78575,56 @@ angular
 	  /**
 	  * When you use someone else's index, initialise it with this constructor
 	  * @param {Object} gun gun node that contains an Identifi index (e.g. user.get('identifi'))
-	  * @param {Object} options {importFromTrustedIndexes: true, subscribeToTrustedIndexes: true, queryTrustedIndexes: true}
+	  * @param {Object} options
 	  * @returns {Index} Identifi index object
 	  */
 	  function Index(gun, options) {
+	    var _this = this;
+
 	    _classCallCheck(this, Index);
 
 	    this.gun = gun || new gun_min();
 	    this.options = _Object$assign({
-	      importFromTrustedIndexes: true,
-	      subscribeToTrustedIndexes: true,
-	      queryTrustedIndexes: true
+	      indexSync: {
+	        import: {
+	          enabled: true,
+	          maxMsgCount: 500,
+	          maxMsgDistance: 2
+	        },
+	        subscribe: {
+	          enabled: true,
+	          maxMsgDistance: 1
+	        },
+	        query: {
+	          enabled: true
+	        }
+	      }
 	    }, options);
+	    if (this.options.indexSync.subscribe.enabled) {
+	      setTimeout(function () {
+	        _this.gun.get('trustedIndexes').map(function (val, uri) {
+	          if (val) {
+	            // TODO: only get new messages?
+	            _this.gun.user(uri).get('identifi').get('messagesByDistance').map(function (val, key) {
+	              var d = _Number$parseInt(key.split(':')[0]);
+	              if (!isNaN(d) && d <= _this.options.indexSync.subscribe.maxMsgDistance) {
+	                Message.fromSig(val).then(function (msg) {
+	                  console.log('adding msg ' + msg.hash + ' from trusted index');
+	                  _this.addMessage(msg);
+	                });
+	              }
+	            });
+	          }
+	        });
+	      }, 5000); // TODO: this should be made to work without timeout
+	    }
 	  }
 
 	  /**
 	  * Use this to load an index that you can write to
 	  * @param {Object} gun gun instance where the index is stored (e.g. new Gun())
 	  * @param {Object} keypair SEA keypair (can be generated with await identifiLib.Key.generate())
-	  * @returns Promise{Index}
+	  * @returns {Promise(Index)}
 	  */
 
 
@@ -78829,7 +78860,7 @@ angular
 	          attrs[encodeURIComponent(a1[1]) + ':' + encodeURIComponent(a1[0])].verified = true;
 	        }
 	      });
-	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs));
+	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs)); // TODO: why this needs to be done twice to register?
 	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs));
 	      recipient.get('attrs').put(attrs);
 	      recipient.get('attrs').put(attrs);
@@ -78925,10 +78956,10 @@ angular
 	  };
 
 	  Index.prototype.addTrustedIndex = async function addTrustedIndex(gunUri) {
-	    var _this = this;
+	    var _this2 = this;
 
-	    var maxMsgsToCrawl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
-	    var maxCrawlDistance = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 2;
+	    var maxMsgsToCrawl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.options.indexSync.import.maxMsgCount;
+	    var maxMsgDistance = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.options.indexSync.import.maxMsgDistance;
 
 	    if (gunUri === this.viewpoint.val) {
 	      return;
@@ -78936,11 +78967,11 @@ angular
 	    console.log('addTrustedIndex', gunUri);
 	    this.gun.get('trustedIndexes').get(gunUri).put(true);
 	    var msgs = [];
-	    if (this.options.importFromTrustedIndexes) {
+	    if (this.options.indexSync.import.enabled) {
 	      await util$1.timeoutPromise(new _Promise(function (resolve) {
-	        _this.gun.user(gunUri).get('identifi').get('messagesByDistance').map(function (val, key) {
+	        _this2.gun.user(gunUri).get('identifi').get('messagesByDistance').map(function (val, key) {
 	          var d = _Number$parseInt(key.split(':')[0]);
-	          if (!isNaN(d) && d <= maxCrawlDistance) {
+	          if (!isNaN(d) && d <= maxMsgDistance) {
 	            Message.fromSig(val).then(function (msg) {
 	              msgs.push(msg);
 	              if (msgs.length >= maxMsgsToCrawl) {
@@ -79024,7 +79055,7 @@ angular
 
 
 	  Index.prototype.addMessages = async function addMessages(msgs, ipfs) {
-	    var _this2 = this;
+	    var _this3 = this;
 
 	    var msgsByAuthor = {};
 	    if (Array.isArray(msgs)) {
@@ -79080,7 +79111,7 @@ angular
 	      while (author && knownIdentity) {
 	        if (author.indexOf(knownIdentity.key) === 0) {
 	          try {
-	            await util$1.timeoutPromise(_this2.addMessage(msgsByAuthor[author], ipfs), 10000);
+	            await util$1.timeoutPromise(_this3.addMessage(msgsByAuthor[author], ipfs), 10000);
 	          } catch (e) {
 	            console.log('adding failed:', e, _JSON$stringify(msgsByAuthor[author], null, 2));
 	          }
@@ -79139,7 +79170,7 @@ angular
 
 
 	  Index.prototype.search = async function search(value, type, callback, limit) {
-	    var _this3 = this;
+	    var _this4 = this;
 
 	    // TODO: param 'exact', type param
 	    var seen = {};
@@ -79156,13 +79187,13 @@ angular
 	      if (soul && !seen.hasOwnProperty(soul)) {
 	        seen[soul] = true;
 	        results++;
-	        callback(new Identity(_this3.gun.get('identitiesByTrustDistance').get(key)));
+	        callback(new Identity(_this4.gun.get('identitiesByTrustDistance').get(key)));
 	      }
 	    });
 	    if (this.options.queryTrustedIndexes) {
 	      this.gun.get('trustedIndexes').map().once(function (val, key) {
 	        if (val) {
-	          _this3.gun.user(key).get('identifi').get('identitiesByTrustDistance').map().once(function (id, k) {
+	          _this4.gun.user(key).get('identifi').get('identitiesByTrustDistance').map().once(function (id, k) {
 	            if (results >= limit) {
 	              // TODO: turn off .map cb
 	              return;
@@ -79174,7 +79205,7 @@ angular
 	            if (soul && !seen.hasOwnProperty(soul)) {
 	              seen[soul] = true;
 	              results++;
-	              callback(new Identity(_this3.gun.user(key).get('identifi').get('identitiesByTrustDistance').get(k)));
+	              callback(new Identity(_this4.gun.user(key).get('identifi').get('identitiesByTrustDistance').get(k)));
 	            }
 	          });
 	        }
@@ -79207,7 +79238,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.75";
+	var version$1 = "0.0.76";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
