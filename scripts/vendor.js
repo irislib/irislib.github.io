@@ -78639,7 +78639,7 @@ angular
 	    }, options);
 	    if (this.options.indexSync.subscribe.enabled) {
 	      setTimeout(function () {
-	        _this.gun.get('trustedIndexes').map(function (val, uri) {
+	        _this.gun.get('trustedIndexes').map().once(function (val, uri) {
 	          if (val) {
 	            // TODO: only get new messages?
 	            _this.gun.user(uri).get('identifi').get('messagesByDistance').map(function (val, key) {
@@ -79313,7 +79313,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.76";
+	var version$1 = "0.0.77";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
