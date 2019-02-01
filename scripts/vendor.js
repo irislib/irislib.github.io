@@ -64063,9 +64063,9 @@ angular
       }];
   });
 })(window, window.angular);
-/*! angularjs-slider - v5.9.0 - 
- (c) Rafal Zajac <rzajac@gmail.com>, Valentin Hervieu <valentin@hervieu.me>, Jussi Saarivirta <jusasi@gmail.com>, Angelin Sirbu <angelin.sirbu@gmail.com> - 
- https://github.com/angular-slider/angularjs-slider - 
+/*! angularjs-slider - v5.9.0 -
+ (c) Rafal Zajac <rzajac@gmail.com>, Valentin Hervieu <valentin@hervieu.me>, Jussi Saarivirta <jusasi@gmail.com>, Angelin Sirbu <angelin.sirbu@gmail.com> -
+ https://github.com/angular-slider/angularjs-slider -
  2016-12-12 */
 /*jslint unparam: true */
 /*global angular: false, console: false, define, module */
@@ -79316,7 +79316,7 @@ angular
 	  return Index;
 	}();
 
-	var version$1 = "0.0.77";
+	var version$1 = "0.0.78";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 

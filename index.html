@@ -55,6 +55,7 @@
               <input type="text" ng-model="query.term"
               placeholder="Search contacts"
               uib-typeahead="identity for identity in search($viewValue, 5)"
+              typeahead-wait-ms="300"
               typeahead-no-results="noResults" class="form-control nav-search-field"
               typeahead-on-select="dropdownSearchSelect($item);query.term=''"
               typeahead-focus-on-select="false"
