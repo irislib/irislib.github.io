@@ -78622,11 +78622,11 @@ angular
 	      indexSync: {
 	        importOnAdd: {
 	          enabled: true,
-	          maxMsgCount: 500,
+	          maxMsgCount: 50,
 	          maxMsgDistance: 2
 	        },
 	        subscribe: {
-	          enabled: true,
+	          enabled: false,
 	          maxMsgDistance: 1
 	        },
 	        query: {
