@@ -80230,8 +80230,6 @@ Gun.chain.then = function(cb) {
 	        }
 	      });
 	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs)); // TODO: why this needs to be done twice to register?
-	      recipient.get('mostVerifiedAttributes').put(Identity.getMostVerifiedAttributes(attrs));
-	      recipient.get('attrs').put(attrs);
 	      recipient.get('attrs').put(attrs);
 	    }
 	    if (msg.signedData.type === 'rating') {
@@ -80269,7 +80267,6 @@ Gun.chain.then = function(cb) {
 	      obj.ipfsUri = msg.ipfsUri;
 	    }
 	    recipient.get('received').get(msgIndexKey).put(obj);
-	    recipient.get('received').get(msgIndexKey).put(obj);
 	    var identityIndexKeysAfter = await this.getIdentityIndexKeys(recipient, hash.substr(0, 6));
 	    for (var j = 0; j < identityIndexKeysBefore.length; j++) {
 	      var k = identityIndexKeysBefore[j];
@@ -80302,7 +80299,6 @@ Gun.chain.then = function(cb) {
 	      obj.ipfsUri = msg.ipfsUri;
 	    }
 	    author.get('sent').get(msgIndexKey).put(obj); // for some reason, doesn't work unless I do it twice
-	    author.get('sent').get(msgIndexKey).put(obj);
 	    return;
 	  };
 
@@ -80522,10 +80518,8 @@ Gun.chain.then = function(cb) {
 	      var ipfsUri = await msg.saveToIpfs(ipfs);
 	      obj.ipfsUri = ipfsUri;
 	    }
-	    this.gun.get('messagesByDistance').get(indexKey).put(obj);
 	    this.gun.get('messagesByDistance').get(indexKey).put(obj); // umm, what? doesn't work unless I write it twice
 	    indexKey = indexKey.substr(indexKey.indexOf(':') + 1); // remove distance from key
-	    this.gun.get('messagesByTimestamp').get(indexKey).put(obj);
 	    this.gun.get('messagesByTimestamp').get(indexKey).put(obj);
 	    await this._updateIdentityIndexesByMsg(msg);
 	    return true;
@@ -80641,7 +80635,7 @@ Gun.chain.then = function(cb) {
 	  return Index;
 	}();
 
-	var version$1 = "0.0.78";
+	var version$1 = "0.0.79";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
