@@ -91476,7 +91476,7 @@ Gun.chain.then = function(cb) {
 	                Message.fromSig(val).then(function (msg) {
 	                  console.log('adding msg ' + msg.hash + ' from trusted index');
 	                  if (_this.options.indexSync.msgTypes.all || _this.options.indexSync.msgTypes.hasOwnProperty(msg.signedData.type)) {
-	                    _this.addMessage(msg);
+	                    _this.addMessage(msg, undefined, { checkIfExists: true });
 	                  }
 	                });
 	              }
@@ -91880,6 +91880,10 @@ Gun.chain.then = function(cb) {
 	      return;
 	    }
 	    console.log('addTrustedIndex', gunUri);
+	    var exists = await this.gun.get('trustedIndexes').get(gunUri).then();
+	    if (exists) {
+	      return;
+	    }
 	    this.gun.get('trustedIndexes').get(gunUri).put(true);
 	    var msgs = [];
 	    if (this.options.indexSync.importOnAdd.enabled) {
@@ -92103,8 +92107,17 @@ Gun.chain.then = function(cb) {
 
 
 	  Index.prototype.addMessage = async function addMessage(msg, ipfs) {
+	    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
 	    if (msg.constructor.name !== 'Message') {
 	      throw new Error('addMessage failed: param must be a Message, received ' + msg.constructor.name);
+	    }
+	    var hash = msg.getHash();
+	    if (true === options.checkIfExists) {
+	      var exists = await this.gun.get('messagesByHash').get(hash).once().then();
+	      if (exists) {
+	        return;
+	      }
 	    }
 	    msg.distance = await this.getMsgTrustDistance(msg);
 	    if (msg.distance === undefined) {
@@ -92115,7 +92128,11 @@ Gun.chain.then = function(cb) {
 	    if (ipfs) {
 	      var ipfsUri = await msg.saveToIpfs(ipfs);
 	      obj.ipfsUri = ipfsUri;
+	      this.gun.get('messagesByHash').get(ipfsUri).put(obj);
+	      this.gun.get('messagesByHash').get(ipfsUri).put(obj);
 	    }
+	    this.gun.get('messagesByHash').get(hash).put(obj);
+	    this.gun.get('messagesByHash').get(hash).put(obj);
 	    this.gun.get('messagesByDistance').get(indexKey).put(obj);
 	    this.gun.get('messagesByDistance').get(indexKey).put(obj); // umm, what? doesn't work unless I write it twice
 	    indexKey = indexKey.substr(indexKey.indexOf(':') + 1); // remove distance from key
@@ -92235,7 +92252,7 @@ Gun.chain.then = function(cb) {
 	  return Index;
 	}();
 
-	var version$1 = "0.0.79";
+	var version$1 = "0.0.80";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
