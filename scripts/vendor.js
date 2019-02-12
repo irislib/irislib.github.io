@@ -80512,6 +80512,71 @@ Gun.chain.then = function(cb) {
 		return cb? cb(res.put) : res.put;
 	});
 };
+var Gun = (typeof window !== "undefined")? window.Gun : require('../gun');
+
+Gun.on('create', function(root){
+	this.to.next(root);
+	var opt = root.opt;
+
+	try {
+		var dgram = require("dgram");
+		var process = require("process");
+	} catch (e) {
+		console.log('multicast is not available');
+		return;
+	}
+
+	if(false === opt.multicast){ return }
+	opt.multicast = opt.multicast || {};
+
+  var MULTICAST_ADDR = "233.255.255.255";
+	var MULTICAST_INTERVAL = 1000;
+  var PORT = 20000;
+	var DEFAULT_GUN_PORT = 8765;
+  var ENC = 'utf8';
+
+  socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
+
+  socket.bind(PORT);
+
+  var address;
+  socket.on("listening", function() {
+    socket.addMembership(MULTICAST_ADDR);
+		if (opt.multicast && opt.multicast.port) { // if port is specified, advertise our node
+			console.log(`Advertising this node (port ${opt.multicast.port}) on multicast (${MULTICAST_ADDR})`);
+			setInterval(sendMessage, MULTICAST_INTERVAL);
+		}
+    address = socket.address();
+  });
+
+  function sendMessage() {
+    var msgObj = {
+      gun: {
+        version: Gun.version,
+        port: opt.multicast.port || DEFAULT_GUN_PORT
+      }
+    };
+    var message = Buffer.from(JSON.stringify(msgObj), ENC);
+    socket.send(message, 0, message.length, PORT, MULTICAST_ADDR, function() {
+      // console.info(`Sending message "${message}"`);
+    });
+  }
+
+  socket.on("message", function(message, rinfo) {
+    try {
+      var msgObj = JSON.parse(message.toString(ENC));
+      if (!(msgObj.gun && msgObj.gun.port)) { return }
+      var peer = `http://${rinfo.address}:${msgObj.gun.port}/gun`;
+      if (!root.opt.peers.hasOwnProperty(peer)) {
+        console.log(`peer ${peer} found via multicast`);
+        root.$.opt({peers: [peer]});
+      }
+    } catch (e) {
+      // console.error(`Received multicast from ${rinfo.address}:${rinfo.port} but failed to connect:`, e);
+    }
+  });
+});
+
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('gun')) :
 	typeof define === 'function' && define.amd ? define(['gun'], factory) :
@@ -91401,17 +91466,16 @@ Gun.chain.then = function(cb) {
 
 	// TODO: flush onto IPFS
 	/**
-	* Identifi index root. Contains five indexes: identitiesBySearchKey, identitiesByTrustDistance,
-	* messagesByHash, messagesByTimestamp, messagesByDistance. If you want messages saved to IPFS, pass
-	* options.ipfs = instance.
-	*
+	* Identifi index root. Contains four indexes: identitiesBySearchKey, identitiesByTrustDistance,
+	* messagesByTimestamp, messagesByDistance.
+	*/
+	/**
 	* When you use someone else's index, initialise it using the Index constructor
 	* @param {Object} gun gun node that contains an Identifi index (e.g. user.get('identifi'))
 	* @param {Object} options see default options in example
 	* @example
 	* Default options:
 	*{
-	*  ipfs: undefined,
 	*  indexSync: {
 	*    importOnAdd: {
 	*      enabled: true,
@@ -91477,7 +91541,7 @@ Gun.chain.then = function(cb) {
 	                Message.fromSig(val).then(function (msg) {
 	                  console.log('adding msg ' + msg.hash + ' from trusted index');
 	                  if (_this.options.indexSync.msgTypes.all || _this.options.indexSync.msgTypes.hasOwnProperty(msg.signedData.type)) {
-	                    _this.addMessage(msg, { checkIfExists: true });
+	                    _this.addMessage(msg, undefined, { checkIfExists: true });
 	                  }
 	                });
 	              }
@@ -92010,7 +92074,7 @@ Gun.chain.then = function(cb) {
 	  */
 
 
-	  Index.prototype.addMessages = async function addMessages(msgs) {
+	  Index.prototype.addMessages = async function addMessages(msgs, ipfs) {
 	    var _this3 = this;
 
 	    var msgsByAuthor = {};
@@ -92079,7 +92143,7 @@ Gun.chain.then = function(cb) {
 	      while (author && knownIdentity) {
 	        if (author.indexOf(knownIdentity.key) === 0) {
 	          try {
-	            await util$1.timeoutPromise(_this3.addMessage(msgsByAuthor[author], { checkIfExists: true }), 10000);
+	            await util$1.timeoutPromise(_this3.addMessage(msgsByAuthor[author], ipfs), 10000);
 	          } catch (e) {
 	            console.log('adding failed:', e, _JSON$stringify(msgsByAuthor[author], null, 2));
 	          }
@@ -92107,8 +92171,8 @@ Gun.chain.then = function(cb) {
 	  */
 
 
-	  Index.prototype.addMessage = async function addMessage(msg) {
-	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  Index.prototype.addMessage = async function addMessage(msg, ipfs) {
+	    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
 	    if (msg.constructor.name !== 'Message') {
 	      throw new Error('addMessage failed: param must be a Message, received ' + msg.constructor.name);
@@ -92126,8 +92190,8 @@ Gun.chain.then = function(cb) {
 	    }
 	    var indexKey = Index.getMsgIndexKey(msg);
 	    var obj = { sig: msg.sig, pubKey: msg.pubKey };
-	    if (this.options.ipfs) {
-	      var ipfsUri = await msg.saveToIpfs(this.options.ipfs);
+	    if (ipfs) {
+	      var ipfsUri = await msg.saveToIpfs(ipfs);
 	      obj.ipfsUri = ipfsUri;
 	      this.gun.get('messagesByHash').get(ipfsUri).put(obj);
 	      this.gun.get('messagesByHash').get(ipfsUri).put(obj);
@@ -92253,7 +92317,7 @@ Gun.chain.then = function(cb) {
 	  return Index;
 	}();
 
-	var version$1 = "0.0.81";
+	var version$1 = "0.0.80";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
@@ -92275,8 +92339,6 @@ Gun.chain.then = function(cb) {
     /* istanbul ignore next */
     if (typeof define === 'function' && define.amd) {
         define(['angular'], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('angular'));
     } else {
         root.angularClipboard = factory(root.angular);
   }
@@ -92329,7 +92391,7 @@ return angular.module('angular-clipboard', [])
         function copyText(text, context) {
             var left = $window.pageXOffset || $document[0].documentElement.scrollLeft;
             var top = $window.pageYOffset || $document[0].documentElement.scrollTop;
-            
+
             var node = createNode(text, context);
             $document[0].body.appendChild(node);
             copyNode(node);
