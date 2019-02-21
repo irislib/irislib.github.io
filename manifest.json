@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
   "name": "identifi",
-  "description": "Identifi standalone Chrome plugin",
-  "version": "1.12",
+  "description": "A social networking application that stores everything on its users' devices which communicate directly with each other - no corporate gatekeepers needed.",
+  "version": "1.22.38",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
+    "browser_style": true,
     "default_icon": "assets/images/icon128.png",
     "default_popup": "popup.html"
   },
@@ -12,6 +13,7 @@
            "48": "assets/images/icon48.png",
           "128": "assets/images/icon128.png" },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "unlimitedStorage"
   ]
 }

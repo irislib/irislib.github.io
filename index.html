@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title ng-bind="pageTitle || 'Identifi'">Identifi</title>
-    <meta name="description" content="Global Address Book">
+    <meta name="description" content="Social Networking Freedom">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta property="og:title" content="Identifi" />
-    <meta property="og:description" content="Global Address Book" />
+    <meta property="og:description" content="Social Networking Freedom" />
     <meta property="og:url" content="https://identi.fi" />
     <meta property="og:image" content="https://identi.fi/assets/images/cover.jpg" />
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -30,14 +30,13 @@
           </div>
 
           <ul class="nav navbar-nav navbar-right">
-            <li class="" ui-sref-active="active"><a ui-sref="messages.list"><span class="glyphicon glyphicon-globe"></span></a></li>
-            <li class="" ui-sref-active="active"><a ui-sref="about"><span class="glyphicon glyphicon-info-sign"></span></a></li>
-      			<li ng-cloak ng-show="authentication.identity" ui-sref-active="active">
+            <li class="" ui-sref-active="active"><a ui-sref="identities.list"><span class="fa fa-book"></span></a></li>
+            <li ng-cloak ng-show="authentication.user" ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a></li>
+            <li ng-cloak ng-show="authentication.identity" ui-sref-active="active">
       				<a ui-sref="identities.show({ type: authentication.user.idType, value: authentication.user.idValue })" class="nav-identicon">
-      					<identicon width="26" identity="authentication.identity" show-distance="0">
+      					<identicon width="26" identity="authentication.identity" show-distance="0" ipfs="ipfs">
       				</a>
       			</li>
-            <li ng-cloak ng-show="authentication.user"><a href="" ng-click="logout()" class="glyphicon glyphicon-log-out"></span></a></li>
             <li class="dropdown" ng-hide="authentication.user">
               <a ng-click="openLoginModal()" href="" class="dropdown-toggle login-button" uib-dropdown-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
             </li>
@@ -46,7 +45,7 @@
           <form class="navbar-form navbar-left nav-search" ng-submit="addAttribute()" role="search" ng-cloak ng-if="'identities.list' | isState">
             <div class="inner-addon right-addon">
               <i class="fa fa-search"></i>
-              <input type="text" focus-on="searchFocus" ng-keydown="searchKeydown($event)" ng-model="query.term" autocomplete="off" autofocus value="" class="nav-search-field search-search form-control" placeholder="Search">
+              <input type="text" focus-on="searchFocus" ng-keydown="searchKeydown($event)" ng-model="query.term" autocomplete="off" autofocus value="" class="nav-search-field search-search form-control" placeholder="Search contacts">
             </div>
           </form>
 
@@ -54,8 +53,9 @@
             <div class="inner-addon right-addon">
               <i class="fa fa-search"></i>
               <input type="text" ng-model="query.term"
-              placeholder="Search"
+              placeholder="Search contacts"
               uib-typeahead="identity for identity in search($viewValue, 5)"
+              typeahead-wait-ms="300"
               typeahead-no-results="noResults" class="form-control nav-search-field"
               typeahead-on-select="dropdownSearchSelect($item);query.term=''"
               typeahead-focus-on-select="false"
@@ -63,7 +63,12 @@
             </div>
             <span ng-if="noResults" auto-close="disabled" is-open="true" uib-dropdown uib-dropdown-toggle>
               <ul class="dropdown-menu" >
-                <li><a href>No results</a></li>
+                <li>
+                  <a class="search-result-row" ui-sref="identities.create">
+                    <span style="line-height:46px" class="glyphicon glyphicon-plus"></span>
+                    Add contact<span ng-if="query.term">: <span ng-bind="capitalizeWords(query.term)"></span></span>
+                  </a>
+                </li>
               </ul>
             </span>
           </div>
