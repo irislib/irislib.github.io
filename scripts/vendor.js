@@ -97431,3 +97431,265 @@ var degreeDifference=remainder.Degree-other.Degree,scale=this.field.multiply(rem
 void(null!=qrcode2.callback&&qrcode2.callback(qrcode2.result))}try{qrcode2.result=qrcode2.process(context)}catch(e){console.log(e),qrcode2.result="error decoding QR Code"}null!=qrcode2.callback&&qrcode2.callback(qrcode2.result)},image.onerror=function(){null!=qrcode2.callback&&qrcode2.callback("Failed to load the image")},image.src=src},qrcode2.isUrl=function(s){return/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(s)},qrcode2.decode_url=function(s){var escaped="";try{escaped=escape(s)}catch(e){console.log(e),escaped=s}var ret="";try{ret=decodeURIComponent(escaped)}catch(e){console.log(e),ret=escaped}return ret},qrcode2.decode_utf8=function(s){return qrcode2.isUrl(s)?qrcode2.decode_url(s):s},qrcode2.process=function(ctx){var start=(new Date).getTime(),image=qrcode2.grayScaleToBitmap(qrcode2.grayscale());if(qrcode2.debug){for(var y=0;y<qrcode2.height;y++)for(var x=0;x<qrcode2.width;x++){var point=4*x+y*qrcode2.width*4;qrcode2.imagedata.data[point]=(image[x+y*qrcode2.width],0),qrcode2.imagedata.data[point+1]=(image[x+y*qrcode2.width],0),qrcode2.imagedata.data[point+2]=image[x+y*qrcode2.width]?255:0}ctx.putImageData(qrcode2.imagedata,0,0)}var detector=new Detector(image),qRCodeMatrix=detector.detect();if(qrcode2.debug){for(var y=0;y<qRCodeMatrix.bits.Height;y++)for(var x=0;x<qRCodeMatrix.bits.Width;x++){var point=4*x*2+2*y*qrcode2.width*4;qrcode2.imagedata.data[point]=(qRCodeMatrix.bits.get_Renamed(x,y),0),qrcode2.imagedata.data[point+1]=(qRCodeMatrix.bits.get_Renamed(x,y),0),qrcode2.imagedata.data[point+2]=qRCodeMatrix.bits.get_Renamed(x,y)?255:0}ctx.putImageData(qrcode2.imagedata,0,0)}for(var reader=Decoder.decode(qRCodeMatrix.bits),data=reader.DataByte,str="",i=0;i<data.length;i++)for(var j=0;j<data[i].length;j++)str+=String.fromCharCode(data[i][j]);var end=(new Date).getTime(),time=end-start;return console.log(time),qrcode2.decode_utf8(str)},qrcode2.getPixel=function(x,y){if(qrcode2.width<x)throw"point error";if(qrcode2.height<y)throw"point error";var point=4*x+y*qrcode2.width*4;return(33*qrcode2.imagedata.data[point]+34*qrcode2.imagedata.data[point+1]+33*qrcode2.imagedata.data[point+2])/100},qrcode2.binarize=function(th){for(var ret=new Array(qrcode2.width*qrcode2.height),y=0;y<qrcode2.height;y++)for(var x=0;x<qrcode2.width;x++){var gray=qrcode2.getPixel(x,y);ret[x+y*qrcode2.width]=gray<=th}return ret},qrcode2.getMiddleBrightnessPerArea=function(image){for(var numSqrtArea=4,areaWidth=Math.floor(qrcode2.width/numSqrtArea),areaHeight=Math.floor(qrcode2.height/numSqrtArea),minmax=new Array(numSqrtArea),i=0;i<numSqrtArea;i++){minmax[i]=new Array(numSqrtArea);for(var i2=0;i2<numSqrtArea;i2++)minmax[i][i2]=new Array(0,0)}for(var ay=0;ay<numSqrtArea;ay++)for(var ax=0;ax<numSqrtArea;ax++){minmax[ax][ay][0]=255;for(var dy=0;dy<areaHeight;dy++)for(var dx=0;dx<areaWidth;dx++){var target=image[areaWidth*ax+dx+(areaHeight*ay+dy)*qrcode2.width];target<minmax[ax][ay][0]&&(minmax[ax][ay][0]=target),target>minmax[ax][ay][1]&&(minmax[ax][ay][1]=target)}}for(var middle=new Array(numSqrtArea),i3=0;i3<numSqrtArea;i3++)middle[i3]=new Array(numSqrtArea);for(var ay=0;ay<numSqrtArea;ay++)for(var ax=0;ax<numSqrtArea;ax++)middle[ax][ay]=Math.floor((minmax[ax][ay][0]+minmax[ax][ay][1])/2);return middle},qrcode2.grayScaleToBitmap=function(grayScale){for(var middle=qrcode2.getMiddleBrightnessPerArea(grayScale),sqrtNumArea=middle.length,areaWidth=Math.floor(qrcode2.width/sqrtNumArea),areaHeight=Math.floor(qrcode2.height/sqrtNumArea),buff=new ArrayBuffer(qrcode2.width*qrcode2.height),bitmap=new Uint8Array(buff),ay=0;ay<sqrtNumArea;ay++)for(var ax=0;ax<sqrtNumArea;ax++)for(var dy=0;dy<areaHeight;dy++)for(var dx=0;dx<areaWidth;dx++)bitmap[areaWidth*ax+dx+(areaHeight*ay+dy)*qrcode2.width]=grayScale[areaWidth*ax+dx+(areaHeight*ay+dy)*qrcode2.width]<middle[ax][ay];return bitmap},qrcode2.grayscale=function(){for(var buff=new ArrayBuffer(qrcode2.width*qrcode2.height),ret=new Uint8Array(buff),y=0;y<qrcode2.height;y++)for(var x=0;x<qrcode2.width;x++){var gray=qrcode2.getPixel(x,y);ret[x+y*qrcode2.width]=gray}return ret};var MIN_SKIP=3,MAX_MODULES=57,INTEGER_MATH_SHIFT=8,CENTER_QUORUM=2;qrcode2.orderBestPatterns=function(patterns){function distance(pattern1,pattern2){var xDiff=pattern1.X-pattern2.X,yDiff=pattern1.Y-pattern2.Y;return Math.sqrt(xDiff*xDiff+yDiff*yDiff)}function crossProductZ(pointA,pointB,pointC){var bX=pointB.x,bY=pointB.y;return(pointC.x-bX)*(pointA.y-bY)-(pointC.y-bY)*(pointA.x-bX)}var pointA,pointB,pointC,zeroOneDistance=distance(patterns[0],patterns[1]),oneTwoDistance=distance(patterns[1],patterns[2]),zeroTwoDistance=distance(patterns[0],patterns[2]);if(oneTwoDistance>=zeroOneDistance&&oneTwoDistance>=zeroTwoDistance?(pointB=patterns[0],pointA=patterns[1],pointC=patterns[2]):zeroTwoDistance>=oneTwoDistance&&zeroTwoDistance>=zeroOneDistance?(pointB=patterns[1],pointA=patterns[0],pointC=patterns[2]):(pointB=patterns[2],pointA=patterns[0],pointC=patterns[1]),crossProductZ(pointA,pointB,pointC)<0){var temp=pointA;pointA=pointC,pointC=temp}patterns[0]=pointA,patterns[1]=pointB,patterns[2]=pointC};
 
 "use strict";function readMore(e){function t(e,t,o){function s(){o.debug("setToggleMoreText"),d.toggle.moreText=d.hmMoreText||"Read more"}function n(){o.debug("setToggleLessText"),d.toggle.lessText=d.hmLessText||"Read less"}function m(){o.debug("setCurrentToggleText"),d.toggle.text=d.toggle.state?d.toggle.lessText:d.toggle.moreText}function g(){o.debug("setShowToggle"),d.toggle.show=d.moreText&&d.moreText.length>0}function l(){o.debug("setLinkClass"),d.toggle.linkClass=d.hmLinkClass}function i(){o.debug("setDotsClass"),d.toggle.dotsClass=d.hmDotsClass}function a(){o.debug("validateLimit"),d.hmLimit=d.hmLimit&&d.hmLimit<=0?void 0:d.hmLimit}function h(){return o.debug("getMoreTextLimit"),d.hmLimit&&d.hmLimit<d.hmText.length?d.hmLimit-d.hmText.length:0}function r(){o.debug("setLessAndMoreText"),d.lessText=e("limitTo")(d.hmText,d.hmLimit),d.moreText=e("limitTo")(d.hmText,h())}var d=this;d.toggle={dots:"...",dotsClass:d.hmDotsClass,linkClass:d.hmLinkClass},d.$onInit=function(){o.debug("initialize"),s(),n(),a(),r(),g(),m(),l(),i()},d.doToggle=function(){o.debug("doToggle"),d.toggle.state=!d.toggle.state,d.showMoreText=!d.showMoreText,m()},t.$watch("vm.hmMoreText",function(e,t){e!=t&&(o.debug("hmMoreText changed"),s(),m())}),t.$watch("vm.hmLessText",function(e,t){e!=t&&(o.debug("hmLessText changed"),n(),m())}),t.$watch("vm.hmDotsClass",function(e,t){e!=t&&(o.debug("hmDotsClass changed"),i())}),t.$watch("vm.hmLinkClass",function(e,t){e!=t&&(o.debug("hmLinkClass changed"),l())}),t.$watch("vm.hmText",function(e,t){e!=t&&(o.debug("hmText changed"),a(),r(),g())}),t.$watch("vm.hmLimit",function(e,t){e!=t&&(o.debug("hmLimit changed"),a(),r(),g())})}return t.$inject=["$filter","$scope","$log"],{restrict:"AE",scope:{hmText:"@",hmLimit:"@",hmMoreText:"@",hmLessText:"@",hmDotsClass:"@",hmLinkClass:"@"},template:e.get("readmore.template.html"),controller:t,controllerAs:"vm",bindToController:!0}}readMore.$inject=["$templateCache"],angular.module("hm.readmore",["ngAnimate","ngSanitize"]).directive("hmReadMore",readMore).config(["$logProvider",function(e){e.debugEnabled(!1)}]),angular.module("hm.readmore").run(["$templateCache",function(e){e.put("readmore.template.html",'<span name="text"><span ng-bind-html="vm.lessText" style="white-space:pre-wrap;"></span><span ng-show="vm.showMoreText" class="more-show-hide" ng-bind-html="vm.moreText" style="white-space:pre-wrap;"></span></span><span name="toggle" ng-show="vm.toggle.show"><span ng-class="vm.toggle.dotsClass" ng-show="!vm.toggle.state">{{ vm.toggle.dots }}</span><a ng-class="vm.toggle.linkClass" ng-click="vm.doToggle()">{{ vm.toggle.text }}</a></span>')}]);
+/**
+ * angular-ui-notification - Angular.js service providing simple notifications using Bootstrap 3 styles with css transitions for animating
+ * @author Alex_Crack
+ * @version v0.3.6
+ * @link https://github.com/alexcrack/angular-ui-notification
+ * @license MIT
+ */
+angular.module('ui-notification',[]);
+
+angular.module('ui-notification').provider('Notification', function() {
+
+    this.options = {
+        delay: 5000,
+        startTop: 10,
+        startRight: 10,
+        verticalSpacing: 10,
+        horizontalSpacing: 10,
+        positionX: 'right',
+        positionY: 'top',
+        replaceMessage: false,
+        templateUrl: 'angular-ui-notification.html',
+        onClose: undefined,
+        closeOnClick: true,
+        maxCount: 0, // 0 - Infinite
+        container: 'body',
+        priority: 10
+    };
+
+    this.setOptions = function(options) {
+        if (!angular.isObject(options)) throw new Error("Options should be an object!");
+        this.options = angular.extend({}, this.options, options);
+    };
+
+    this.$get = ["$timeout", "$http", "$compile", "$templateCache", "$rootScope", "$injector", "$sce", "$q", "$window", function($timeout, $http, $compile, $templateCache, $rootScope, $injector, $sce, $q, $window) {
+        var options = this.options;
+
+        var startTop = options.startTop;
+        var startRight = options.startRight;
+        var verticalSpacing = options.verticalSpacing;
+        var horizontalSpacing = options.horizontalSpacing;
+        var delay = options.delay;
+
+        var messageElements = [];
+        var isResizeBound = false;
+
+        var notify = function(args, t){
+            var deferred = $q.defer();
+
+            if (typeof args !== 'object' || args === null) {
+                args = {message:args};
+            }
+
+            args.scope = args.scope ? args.scope : $rootScope;
+            args.template = args.templateUrl ? args.templateUrl : options.templateUrl;
+            args.delay = !angular.isUndefined(args.delay) ? args.delay : delay;
+            args.type = t || args.type || options.type ||  '';
+            args.positionY = args.positionY ? args.positionY : options.positionY;
+            args.positionX = args.positionX ? args.positionX : options.positionX;
+            args.replaceMessage = args.replaceMessage ? args.replaceMessage : options.replaceMessage;
+            args.onClose = args.onClose ? args.onClose : options.onClose;
+            args.closeOnClick = (args.closeOnClick !== null && args.closeOnClick !== undefined) ? args.closeOnClick : options.closeOnClick;
+            args.container = args.container ? args.container : options.container;
+            args.priority = args.priority ? args.priority : options.priority;
+            
+            var template=$templateCache.get(args.template);
+
+            if(template){
+                processNotificationTemplate(template);
+            }else{
+                // load it via $http only if it isn't default template and template isn't exist in template cache
+                // cache:true means cache it for later access.
+                $http.get(args.template,{cache: true})
+                  .then(function(response){
+                    processNotificationTemplate(response.data);
+                  })
+                  .catch(function(data){
+                    throw new Error('Template ('+args.template+') could not be loaded. ' + data);
+                  });                
+            }    
+            
+            
+             function processNotificationTemplate(template) {
+
+                var scope = args.scope.$new();
+                scope.message = $sce.trustAsHtml(args.message);
+                scope.title = $sce.trustAsHtml(args.title);
+                scope.t = args.type.substr(0,1);
+                scope.delay = args.delay;
+                scope.onClose = args.onClose;
+
+                var priorityCompareTop = function(a, b) {
+                    return a._priority - b._priority;
+                };
+
+                var priorityCompareBtm = function(a, b) {
+                    return b._priority - a._priority;
+                };
+
+                var reposite = function() {
+                    var j = 0;
+                    var k = 0;
+                    var lastTop = startTop;
+                    var lastRight = startRight;
+                    var lastPosition = [];
+
+                    if( args.positionY === 'top' ) {
+                        messageElements.sort( priorityCompareTop );
+                    } else if( args.positionY === 'bottom' ) {
+                        messageElements.sort( priorityCompareBtm );
+                    }
+
+                    for(var i = messageElements.length - 1; i >= 0; i --) {
+                        var element  = messageElements[i];
+                        if (args.replaceMessage && i < messageElements.length - 1) {
+                            element.addClass('killed');
+                            continue;
+                        }
+                        var elHeight = parseInt(element[0].offsetHeight);
+                        var elWidth  = parseInt(element[0].offsetWidth);
+                        var position = lastPosition[element._positionY+element._positionX];
+
+                        if ((top + elHeight) > window.innerHeight) {
+                            position = startTop;
+                            k ++;
+                            j = 0;
+                        }
+
+                        var top = (lastTop = position ? (j === 0 ? position : position + verticalSpacing) : startTop);
+                        var right = lastRight + (k * (horizontalSpacing + elWidth));
+
+                        element.css(element._positionY, top + 'px');
+                        if (element._positionX == 'center') {
+                            element.css('left', parseInt(window.innerWidth / 2 - elWidth / 2) + 'px');
+                        } else {
+                            element.css(element._positionX, right + 'px');
+                        }
+
+                        lastPosition[element._positionY+element._positionX] = top + elHeight;
+
+                        if (options.maxCount > 0 && messageElements.length > options.maxCount && i === 0) {
+                            element.scope().kill(true);
+                        }
+
+                        j ++;
+                    }
+                };
+
+                var templateElement = $compile(template)(scope);
+                templateElement._positionY = args.positionY;
+                templateElement._positionX = args.positionX;
+                templateElement._priority = args.priority;
+                templateElement.addClass(args.type);
+
+                var closeEvent = function(e) {
+                    e = e.originalEvent || e;
+                    if (e.type === 'click' || (e.propertyName === 'opacity' && e.elapsedTime >= 1)){
+                        if (scope.onClose) {
+                            scope.$apply(scope.onClose(templateElement));
+                        }
+
+                        templateElement.remove();
+                        messageElements.splice(messageElements.indexOf(templateElement), 1);
+                        scope.$destroy();
+                        reposite();
+                    }
+                };
+
+                if (args.closeOnClick) {
+                    templateElement.addClass('clickable');
+                    templateElement.bind('click', closeEvent);
+                }
+
+                templateElement.bind('webkitTransitionEnd oTransitionEnd otransitionend transitionend msTransitionEnd', closeEvent);
+
+                if (angular.isNumber(args.delay)) {
+                    $timeout(function() {
+                        templateElement.addClass('killed');
+                    }, args.delay);
+                }
+
+                setCssTransitions('none');
+
+                angular.element(document.querySelector(args.container)).append(templateElement);
+                var offset = -(parseInt(templateElement[0].offsetHeight) + 50);
+                templateElement.css(templateElement._positionY, offset + "px");
+                messageElements.push(templateElement);
+
+                if(args.positionX == 'center'){
+                    var elWidth = parseInt(templateElement[0].offsetWidth);
+                    templateElement.css('left', parseInt(window.innerWidth / 2 - elWidth / 2) + 'px');
+                }
+
+                $timeout(function(){
+                    setCssTransitions('');
+                });
+
+                function setCssTransitions(value){
+                    ['-webkit-transition', '-o-transition', 'transition'].forEach(function(prefix){
+                        templateElement.css(prefix, value);
+                    });
+                }
+
+                scope._templateElement = templateElement;
+
+                scope.kill = function(isHard) {
+                    if (isHard) {
+                        if (scope.onClose) {
+                            scope.$apply(scope.onClose(scope._templateElement));
+                        }
+
+                        messageElements.splice(messageElements.indexOf(scope._templateElement), 1);
+                        scope._templateElement.remove();
+                        scope.$destroy();
+                        $timeout(reposite);
+                    } else {
+                        scope._templateElement.addClass('killed');
+                    }
+                };
+
+                $timeout(reposite);
+
+                if (!isResizeBound) {
+                    angular.element($window).bind('resize', function(e) {
+                        $timeout(reposite);
+                    });
+                    isResizeBound = true;
+                }
+
+                deferred.resolve(scope);
+
+            }
+
+            return deferred.promise;
+        };
+
+        notify.primary = function(args) {
+            return this(args, 'primary');
+        };
+        notify.error = function(args) {
+            return this(args, 'error');
+        };
+        notify.success = function(args) {
+            return this(args, 'success');
+        };
+        notify.info = function(args) {
+            return this(args, 'info');
+        };
+        notify.warning = function(args) {
+            return this(args, 'warning');
+        };
+
+        notify.clearAll = function() {
+            angular.forEach(messageElements, function(element) {
+                element.addClass('killed');
+            });
+        };
+
+        return notify;
+    }];
+});
+
+angular.module("ui-notification").run(["$templateCache", function($templateCache) {$templateCache.put("angular-ui-notification.html","<div class=\"ui-notification\"><h3 ng-show=\"title\" ng-bind-html=\"title\"></h3><div class=\"message\" ng-bind-html=\"message\"></div></div>");}]);
