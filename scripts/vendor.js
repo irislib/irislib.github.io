@@ -81343,6 +81343,66 @@ Gun.on('create', function(root){
     module.exports = Store;
   }
 }());
+var Gun = (typeof window !== "undefined")? window.Gun : require('../gun');
+
+const rel_ = Gun.val.link._;  // '#'
+const node_ = Gun.node._;  // '_'
+
+Gun.chain.unset = function(node){
+	if( this && node && node[node_] && node[node_].put && node[node_].put[node_] && node[node_].put[node_][rel_] )
+		this.put( { [node[node_].put[node_][rel_]]:null} );
+	return this;
+}
+
+;(function(){
+	// NOTE: While the algorithm is P2P,
+	// the current implementation is one sided,
+	// only browsers self-modify, servers do not.
+	// Need to fix this! Since WebRTC is now working.
+	var env;
+	if(typeof global !== "undefined"){ env = global }
+	if(typeof window !== "undefined"){ var Gun = (env = window).Gun }
+	else {
+	if(typeof require !== "undefined"){ var Gun = require('./gun') }
+	}
+
+	Gun.on('opt', function(ctx){
+		this.to.next(ctx);
+		if(ctx.once){ return }
+		ctx.on('in', function(at){
+			if(!at.nts && !at.NTS){
+				return this.to.next(at);
+			}
+			if(at['@']){
+				(ask[at['@']]||noop)(at);
+				return;
+			}
+			if(env.window){
+				return this.to.next(at);
+			}
+			this.to.next({'@': at['#'], nts: Gun.time.is()});
+		});
+		var ask = {}, noop = function(){};
+		if(!env.window){ return }
+
+		Gun.state.drift = Gun.state.drift || 0;
+		setTimeout(function ping(){
+			var NTS = {}, ack = Gun.text.random(), msg = {'#': ack, nts: true};
+			NTS.start = Gun.state();
+			ask[ack] = function(at){
+				NTS.end = Gun.state();
+				Gun.obj.del(ask, ack);
+				NTS.latency = (NTS.end - NTS.start)/2;
+				if(!at.nts && !at.NTS){ return }
+				NTS.calc = NTS.latency + (at.NTS || at.nts);
+				Gun.state.drift -= (NTS.end - NTS.calc)/2;
+				setTimeout(ping, 1000);
+			}
+			ctx.on('out', msg);
+		}, 1);
+	});
+	// test by opening up examples/game/nts.html on devices that aren't NTP synced.
+}());
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('gun')) :
 	typeof define === 'function' && define.amd ? define(['gun'], factory) :
@@ -81352,7 +81412,7 @@ Gun.on('create', function(root){
 	Gun = Gun && Gun.hasOwnProperty('default') ? Gun['default'] : Gun;
 
 	function unwrapExports (x) {
-		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x.default : x;
+		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
 	function createCommonjsModule(fn, module) {
@@ -81360,7 +81420,7 @@ Gun.on('create', function(root){
 	}
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.4' };
+	var core = module.exports = { version: '2.6.9' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -82169,6 +82229,8 @@ Gun.on('create', function(root){
 
 
 
+
+
 	var gOPD$1 = _objectGopd.f;
 	var dP$1 = _objectDp.f;
 	var gOPN$1 = _objectGopnExt.f;
@@ -82183,7 +82245,7 @@ Gun.on('create', function(root){
 	var AllSymbols = _shared('symbols');
 	var OPSymbols = _shared('op-symbols');
 	var ObjectProto$1 = Object[PROTOTYPE$2];
-	var USE_NATIVE = typeof $Symbol == 'function';
+	var USE_NATIVE = typeof $Symbol == 'function' && !!_objectGops.f;
 	var QObject = _global.QObject;
 	// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 	var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
@@ -82342,6 +82404,16 @@ Gun.on('create', function(root){
 	  getOwnPropertyNames: $getOwnPropertyNames,
 	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
 	  getOwnPropertySymbols: $getOwnPropertySymbols
+	});
+
+	// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+	// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+	var FAILS_ON_PRIMITIVES = _fails(function () { _objectGops.f(1); });
+
+	_export(_export.S + _export.F * FAILS_ON_PRIMITIVES, 'Object', {
+	  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+	    return _objectGops.f(_toObject(it));
+	  }
 	});
 
 	// 24.3.2 JSON.stringify(value [, replacer [, space]])
@@ -83955,24 +84027,28 @@ Gun.on('create', function(root){
 	if (typeof Object.create === 'function') {
 	  // implementation from standard node.js 'util' module
 	  module.exports = function inherits(ctor, superCtor) {
-	    ctor.super_ = superCtor;
-	    ctor.prototype = Object.create(superCtor.prototype, {
-	      constructor: {
-	        value: ctor,
-	        enumerable: false,
-	        writable: true,
-	        configurable: true
-	      }
-	    });
+	    if (superCtor) {
+	      ctor.super_ = superCtor;
+	      ctor.prototype = Object.create(superCtor.prototype, {
+	        constructor: {
+	          value: ctor,
+	          enumerable: false,
+	          writable: true,
+	          configurable: true
+	        }
+	      });
+	    }
 	  };
 	} else {
 	  // old school shim for old browsers
 	  module.exports = function inherits(ctor, superCtor) {
-	    ctor.super_ = superCtor;
-	    var TempCtor = function () {};
-	    TempCtor.prototype = superCtor.prototype;
-	    ctor.prototype = new TempCtor();
-	    ctor.prototype.constructor = ctor;
+	    if (superCtor) {
+	      ctor.super_ = superCtor;
+	      var TempCtor = function () {};
+	      TempCtor.prototype = superCtor.prototype;
+	      ctor.prototype = new TempCtor();
+	      ctor.prototype.constructor = ctor;
+	    }
 	  };
 	}
 	});
@@ -85980,6 +86056,8 @@ Gun.on('create', function(root){
 	function SafeBuffer (arg, encodingOrOffset, length) {
 	  return Buffer(arg, encodingOrOffset, length)
 	}
+
+	SafeBuffer.prototype = Object.create(Buffer.prototype);
 
 	// Copy static methods from Buffer
 	copyProps(Buffer, SafeBuffer);
@@ -91098,13 +91176,14 @@ Gun.on('create', function(root){
 	  */
 	  Key.getDefault = async function getDefault() {
 	    var datadir = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.';
+	    var keyfile = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'identifi.key';
 
 	    if (myKey) {
 	      return myKey;
 	    }
 	    if (util$1.isNode) {
 	      var fs = require('fs');
-	      var privKeyFile = datadir + '/private.key';
+	      var privKeyFile = datadir + '/' + keyfile;
 	      if (fs.existsSync(privKeyFile)) {
 	        var f = fs.readFileSync(privKeyFile, 'utf8');
 	        myKey = Key.fromString(f);
@@ -91115,7 +91194,7 @@ Gun.on('create', function(root){
 	        fs.chmodSync(privKeyFile, 400);
 	      }
 	      if (!myKey) {
-	        throw new Error('loading default key failed - check ' + datadir + '/private.key');
+	        throw new Error('loading default key failed - check ' + datadir + '/' + keyfile);
 	      }
 	    } else {
 	      var str = window.localStorage.getItem('iris.myKey');
@@ -91248,7 +91327,7 @@ Gun.on('create', function(root){
 	*     rating: 1,
 	*     maxRating: 10,
 	*     minRating: -10,
-	*     comment: 'Traded 1 BTC'
+	*     text: 'Traded 1 BTC'
 	*   },
 	*   signer: 'ABCD1234',
 	*   signature: '1234ABCD'
@@ -92120,9 +92199,13 @@ Gun.on('create', function(root){
 	    var i = 0;
 	    var result = [];
 	    var key;
-	    while (length > i) if (isEnum$1.call(O, key = keys[i++])) {
-	      result.push(isEntries ? [key, O[key]] : O[key]);
-	    } return result;
+	    while (length > i) {
+	      key = keys[i++];
+	      if (!_descriptors || isEnum$1.call(O, key)) {
+	        result.push(isEntries ? [key, O[key]] : O[key]);
+	      }
+	    }
+	    return result;
 	  };
 	};
 
@@ -92219,6 +92302,7 @@ Gun.on('create', function(root){
 
 
 
+
 	var $assign = Object.assign;
 
 	// should work with symbols and should have deterministic property order (V8 bug)
@@ -92243,7 +92327,10 @@ Gun.on('create', function(root){
 	    var length = keys.length;
 	    var j = 0;
 	    var key;
-	    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+	    while (length > j) {
+	      key = keys[j++];
+	      if (!_descriptors || isEnum.call(S, key)) T[key] = S[key];
+	    }
 	  } return T;
 	} : $assign;
 
@@ -92259,6 +92346,148 @@ Gun.on('create', function(root){
 	});
 
 	var _Object$assign = unwrapExports(assign$1);
+
+	/**
+	* Private communication channel between two or more participants. Can be used
+	* independently of other Iris stuff.
+	*
+	* Messages are encrypted, but currently anyone can see which public keys
+	* are communicating with each other. This will change in later versions.
+	*
+	* @param {Object} options {key, gun, onMessage, participants}
+	*/
+
+	var Chat = function () {
+	  function Chat(options) {
+	    _classCallCheck(this, Chat);
+
+	    this.key = options.key;
+	    this.gun = options.gun;
+	    this.user = this.gun.user();
+	    this.user.auth(this.key);
+	    this.user.put({ epub: this.key.epub });
+	    this.secrets = {}; // maps participant public key to shared secret
+	    this.onMessage = options.onMessage;
+
+	    if (typeof options.participants === 'string') {
+	      this.addPub(options.participants);
+	    } else if (Array.isArray(options.participants)) {
+	      for (var i = 0; i < options.participants.length; i++) {
+	        if (typeof options.participants[i] === 'string') {
+	          this.addPub(options.participants[i]);
+	        } else {
+	          console.log('participant public key must be string, got', _typeof(options.participants[i]), options.participants[i]);
+	        }
+	      }
+	    }
+	  }
+
+	  Chat.prototype.getSecret = async function getSecret(pub) {
+	    if (!this.secrets[pub]) {
+	      var epub = await this.gun.user(pub).get('epub').once().then();
+	      this.secrets[pub] = await Gun.SEA.secret(epub, this.user._.sea);
+	    }
+	    return this.secrets[pub];
+	  };
+
+	  Chat.prototype.messageReceived = async function messageReceived(data, pub) {
+	    var decrypted = await Gun.SEA.decrypt(data, (await this.getSecret(pub)));
+	    if (this.onMessage) {
+	      this.onMessage(decrypted);
+	    } else {
+	      console.log('chat message received', decrypted);
+	    }
+	  };
+
+	  /**
+	  * Add a public key to the chat
+	  * @param {string} pub
+	  */
+
+
+	  Chat.prototype.addPub = function addPub(pub) {
+	    var _this = this;
+
+	    this.secrets[pub] = null;
+	    this.getSecret(pub);
+	    // Subscribe to their messages
+	    this.gun.user(pub).get('chat').get(this.key.pub).map().once(function (data) {
+	      _this.messageReceived(data, pub);
+	    });
+	    // Subscribe to our messages
+	    this.user.get('chat').get(pub).map().once(function (data) {
+	      _this.messageReceived(data, pub);
+	    });
+	  };
+
+	  /**
+	  * Send a message to the chat
+	  * @param msg string or {time, author, text} object
+	  */
+
+
+	  Chat.prototype.send = async function send(msg) {
+	    if (typeof msg === 'string') {
+	      msg = {
+	        date: new Date().getTime(),
+	        author: 'anonymous',
+	        text: msg
+	      };
+	    }
+	    //this.gun.user().get('message').set(temp);
+	    var keys = _Object$keys(this.secrets);
+	    for (var i = 0; i < keys.length; i++) {
+	      var pub = keys[i];
+	      var encrypted = await Gun.SEA.encrypt(_JSON$stringify(msg), (await this.getSecret(pub)));
+	      this.user.get('chat').get(pub).set(encrypted);
+	    }
+	  };
+
+	  /**
+	  * Set the user's online status
+	  * @param {object} gun
+	  * @param {boolean} isOnline true: update the user's lastActive time every 3 seconds, false: stop updating
+	  */
+
+
+	  Chat.setOnline = function setOnline(gun, isOnline) {
+	    if (isOnline) {
+	      var update = function update() {
+	        gun.user().get('lastActive').put(Math.round(Gun.state() / 1000));
+	      };
+	      update();
+	      gun.setOnlineInterval = setInterval(update, 3000);
+	    } else {
+	      clearInterval(gun.setOnlineInterval);
+	    }
+	  };
+
+	  /**
+	  * Get the online status of a user.
+	  *
+	  * @param {object} gun
+	  * @param {string} pubKey public key of the user
+	  * @param {boolean} callback receives a boolean each time the user's online status changes
+	  */
+
+
+	  Chat.getOnline = function getOnline(gun, pubKey, callback) {
+	    var timeout = void 0;
+	    gun.user(pubKey).get('lastActive').on(function (lastActive) {
+	      clearTimeout(timeout);
+	      var now = Math.round(Gun.state() / 1000);
+	      var isOnline = lastActive > now - 6 && lastActive < now + 30;
+	      callback(isOnline);
+	      if (isOnline) {
+	        timeout = setTimeout(function () {
+	          return callback(false);
+	        }, 6000);
+	      }
+	    });
+	  };
+
+	  return Chat;
+	}();
 
 	// temp method for GUN search
 	async function searchText(node, callback, query, limit, cursor, desc) {
@@ -92400,6 +92629,7 @@ Gun.on('create', function(root){
 	    user.auth(keypair);
 	    this.writable = true;
 	    this.viewpoint = new Attribute('keyID', Key.getId(keypair));
+	    user.get('epub').put(keypair.epub);
 	    this.gun = user.get('iris');
 	    var uri = this.viewpoint.uri();
 	    var g = this.gun.get('identitiesBySearchKey').get(uri);
@@ -92421,6 +92651,33 @@ Gun.on('create', function(root){
 	        _this2.addMessage(msg);
 	      });
 	    }
+	  };
+
+	  /**
+	  * Set the user's online status
+	  *
+	  * @param {boolean} isOnline true: update the user's lastActive time every 3 seconds, false: stop updating
+	  */
+
+
+	  Index.prototype.setOnline = function setOnline(isOnline) {
+	    if (!this.writable) {
+	      console.error('setOnline can\'t be called on a non-writable index');
+	      return;
+	    }
+	    Chat.setOnline(this.gun, isOnline);
+	  };
+
+	  /**
+	  * Get the online status of a user.
+	  *
+	  * @param {string} pubKey public key of the user
+	  * @param {boolean} callback receives a boolean each time the user's online status changes
+	  */
+
+
+	  Index.prototype.getOnline = function getOnline(pubKey, callback) {
+	    Chat.getOnline(this.gun, pubKey, callback);
 	  };
 
 	  Index.prototype._subscribeToTrustedIndexes = function _subscribeToTrustedIndexes() {
@@ -93154,6 +93411,9 @@ Gun.on('create', function(root){
 	  Index.prototype.addMessages = async function addMessages(msgs) {
 	    var _this8 = this;
 
+	    if (!this.writable) {
+	      throw new Error('Cannot write to a read-only index (initialized with options.pubKey)');
+	    }
 	    var msgsByAuthor = {};
 	    if (Array.isArray(msgs)) {
 	      this.debug('sorting ' + msgs.length + ' messages onto a search tree...');
@@ -93252,6 +93512,9 @@ Gun.on('create', function(root){
 	  Index.prototype.addMessage = async function addMessage(msg) {
 	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+	    if (!this.writable) {
+	      throw new Error('Cannot write to a read-only index (initialized with options.pubKey)');
+	    }
 	    var start = void 0;
 	    if (msg.constructor.name !== 'Message') {
 	      throw new Error('addMessage failed: param must be a Message, received ' + msg.constructor.name);
@@ -93517,7 +93780,7 @@ Gun.on('create', function(root){
 	  return Index;
 	}();
 
-	var version$1 = "0.0.104";
+	var version$1 = "0.0.112";
 
 	/*eslint no-useless-escape: "off", camelcase: "off" */
 
@@ -93528,6 +93791,7 @@ Gun.on('create', function(root){
 	  Attribute: Attribute,
 	  Index: Index,
 	  Key: Key,
+	  Chat: Chat,
 	  util: util$1
 	};
 
