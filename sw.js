@@ -23,6 +23,9 @@ self.addEventListener('install', function(event) {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
+      .catch(function(err) {
+        console.error('Caching error', err);
+      })
   );
 });
 
@@ -55,7 +58,10 @@ self.addEventListener('fetch', function(event) {
     caches.match(event.request)
       .then(function(response) {
         // Cache hit - return response
-        if (response) {
+        if (self.location.host.indexOf('localhost') === 0) {
+          console.log('not sw caching localhost');
+        }
+        else if (response) {
           console.log('cache hit', event.request);
           fetchAndUpdate(event.request);
           return response;
@@ -64,4 +70,25 @@ self.addEventListener('fetch', function(event) {
         return fetchAndUpdate(event.request);
       })
     );
+});
+
+self.addEventListener('push', function(e) {
+  var options = {
+    body: 'This notification was generated from a push!',
+    icon: 'images/icon128.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: '2'
+    },
+    actions: [
+      {action: 'explore', title: 'Explore this new world',
+        icon: 'images/checkmark.png'},
+      {action: 'close', title: 'Close',
+        icon: 'images/xmark.png'}
+    ]
+  };
+  e.waitUntil(
+    self.registration.showNotification('Hello world!', options)
+  );
 });
