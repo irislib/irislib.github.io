@@ -10,7 +10,8 @@ var urlsToCache = [
   'assets/fonts/Lato-700/Lato-700.woff2',
   'assets/fonts/Lato-300/Lato-300.woff2',
   'assets/fonts/Lato-regular/Lato-regular.woff2',
-  'fonts/fontawesome-webfont.woff2',
+  'fonts/fa-regular-400.woff2',
+  'fonts/fa-brands-400.woff2',
   'fonts/glyphicons-halflings-regular.woff2',
   'assets/images/favicon.ico'
 ];
@@ -91,4 +92,26 @@ self.addEventListener('push', function(e) {
   e.waitUntil(
     self.registration.showNotification('Hello world!', options)
   );
+});
+
+self.addEventListener('notificationclick', function(event) { // TODO: not working on chrome?
+  console.log('On notification click: ', event.notification);
+  event.notification.close();
+
+  // This looks to see if the current is already open and
+  // focuses if it is
+  event.waitUntil(clients.matchAll({
+    includeUncontrolled: true,
+    type: "window"
+  }).then(function(clientList) {
+    console.log('clientList', clientList);
+    for (var i = 0; i < clientList.length; i++) {
+      var client = clientList[i];
+      console.log('client', client);
+      if (client.url == '/' && 'focus' in client)
+        return client.focus();
+    }
+    if (clients.openWindow)
+      return clients.openWindow('/');
+  }));
 });
