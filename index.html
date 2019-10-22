@@ -15,11 +15,11 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
     <link rel="manifest" href="/assets/images/site.webmanifest">
-    <link rel="mask-icon" href="/assets/images/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="mask-icon" href="/assets/images/safari-pinned-tab.svg" color="#74d5f1">
     <link rel="shortcut icon" href="/assets/images/favicon.ico">
-    <meta name="msapplication-TileColor" content="#2b5797">
+    <meta name="msapplication-TileColor" content="#74d5f1">
     <meta name="msapplication-config" content="/assets/images/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#74d5f1">
 
     <script>
     var userAgent = navigator.userAgent.toLowerCase();
@@ -52,8 +52,11 @@
       <nav class="navbar navbar-default navbar-fixed-top"> <!-- ng-controller="HeaderController"-->
       	<div class="container" role="navigation">
           <div class="navbar-header">
-            <h1><a href="#" class="navbar-brand" ng-click="logoClicked();removeFocus($event)">
-            iris</a></h1>
+            <h1>
+              <a href="#" class="navbar-brand" scroll-on-click>
+                <img height="30" src="assets/images/logo.png" style="margin-top: -4px;">
+              </a>
+            </h1>
           </div>
 
           <ul class="nav navbar-nav navbar-right">
